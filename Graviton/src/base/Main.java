@@ -21,11 +21,10 @@ public class Main extends Application {
 		Timer timer = new Timer();
 		timer.start();
 		
-		
 		stage.show();
 	}
 	
-	static void update(long nsSinceLastFrame) {
+	public static void update(long nsSinceLastFrame) {
 		scene.update(nsSinceLastFrame);
 	}
 
