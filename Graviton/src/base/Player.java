@@ -13,7 +13,7 @@ public class Player extends StackPane implements DelayUpdatable {
 	private static final double DEFAULT_WIDTH = 20, DEFAULT_HEIGHT = DEFAULT_WIDTH;
 	private static final double COLLIDE_FLUSH = 0.5;
 	
-	private final StackPane red;
+	private final StackPane color;
 	
 	private GravityMode mode;
 	private double xvel, yvel, x, y;
@@ -21,27 +21,24 @@ public class Player extends StackPane implements DelayUpdatable {
 	public Player() {
 		yvel = 0;
 		xvel = 0;
-		x = 100;
-		y = 100;
+		x = 300;
+		y = 50;
 		mode = DEFAULT_MODE;
-		red = new StackPane();
-		red.setOpaqueInsets(new Insets(1));
-		red.setBackground(Backgrounds.of(Color.RED));
-		red.setMinWidth(DEFAULT_WIDTH);
-		red.setMinHeight(DEFAULT_HEIGHT);
-		red.setMaxWidth(DEFAULT_WIDTH);
-		red.setMaxHeight(DEFAULT_HEIGHT);
-		getChildren().addAll(red);
+		color = new StackPane();
+		color.setOpaqueInsets(new Insets(1));
+		color.setBackground(Backgrounds.of(Color.BLUE));
+		color.setMinWidth(DEFAULT_WIDTH);
+		color.setMinHeight(DEFAULT_HEIGHT);
+		color.setMaxWidth(DEFAULT_WIDTH);
+		color.setMaxHeight(DEFAULT_HEIGHT);
+		getChildren().addAll(color);
 		
 	}
 	
 	@Override
 	public void update(long nsSinceLastFrame) {
-//		System.out.printf("%n%nUPDATE %d%n", nsSinceLastFrame);
-		
 		double sec = nsSinceLastFrame / 1e9;
 		double oldX = x, oldY = y;
-		double oldXvel = xvel, oldYvel = yvel;
 		double xaccel = mode.xAccel(), yaccel = mode.yAccel();
 		
 		x += xvel;
@@ -85,13 +82,6 @@ public class Player extends StackPane implements DelayUpdatable {
 		return p.getBoundsInParent().intersects(getBoundsInParent());
 	}
 	
-	private boolean intersectsAny() {
-		for(Platform p : Main.scene().pane().platforms())
-			if(intersects(p))
-				return true;
-		return false;
-	}
-	
 	public void setMode(GravityMode mode) {
 		this.mode = mode;
 	}
@@ -110,6 +100,10 @@ public class Player extends StackPane implements DelayUpdatable {
 	
 	public double height() {
 		return getHeight();
+	}
+	
+	public Point2D center() {
+		return new Point2D(x() + width() / 2, y() + height() / 2);
 	}
 	
 	private double findX(double safe, double collide, Platform p) {

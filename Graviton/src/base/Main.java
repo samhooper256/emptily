@@ -36,4 +36,9 @@ public class Main extends Application {
 		return scene;
 	}
 	
+	public static MainPane pane() {
+		return scene().pane();
+	}
+	
+	
 }
