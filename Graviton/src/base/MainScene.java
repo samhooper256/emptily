@@ -1,14 +1,16 @@
 package base;
 
-import javafx.scene.*;
-import javafx.scene.input.KeyEvent;
 
-public class MainScene extends Scene {
+import javafx.geometry.*;
+import javafx.scene.*;
+import javafx.scene.input.*;
+
+public class MainScene extends Scene implements DelayUpdatable {
 	
 	private static final double DEFAULT_WIDTH = 640, DEFAULT_HEIGHT = DEFAULT_WIDTH * 9 / 16;
 	
 	private final MainPane root;
-	private final Camera camera;
+	private final PerspectiveCamera camera;
 	
 	public MainScene() {
 		this(new MainPane(), DEFAULT_WIDTH, DEFAULT_HEIGHT);
@@ -18,6 +20,7 @@ public class MainScene extends Scene {
 		super(root, width, height);
 		this.root = root;
 		setOnKeyPressed(this::keyEvent);
+		setOnMouseClicked(this::mouseEvent);
 		camera = new PerspectiveCamera();
 		setCamera(camera);
 		camera.translateXProperty().bind(pane().player().layoutXProperty().subtract(widthProperty().divide(2)));
@@ -28,12 +31,22 @@ public class MainScene extends Scene {
 		return root;
 	}
 	
-	private void keyEvent(KeyEvent eh) {
-		root.keyPressed(eh.getCode());
+	private void keyEvent(KeyEvent ke) {
+		root.keyPressed(ke.getCode());
 	}
 	
+	private void mouseEvent(MouseEvent me) {
+		Point2D coords = root.sceneToLocal(me.getSceneX(), me.getSceneY());
+		pane().leftClicked(new Point2D(coords.getX() + camera.getTranslateX(), coords.getY() + camera.getTranslateY()));
+	}
+	
+	@Override
 	public void update(long nsSinceLastFrame) {
 		root.update(nsSinceLastFrame);
+	}
+	
+	public PerspectiveCamera camera() {
+		return camera;
 	}
 	
 }

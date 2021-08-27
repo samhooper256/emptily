@@ -7,35 +7,11 @@ import javafx.geometry.*;
 import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
 
-public class Player extends StackPane {
-
-	private static class BottomLine extends CollisionLine {
-		
-		Platform platform = null;
-		
-		public BottomLine(double startX, double startY, double endX, double endY) {
-			super(Side.BOTTOM, startX, startY, endX, endY);
-		}
-		boolean hasPlatform() {
-			return platform != null;
-		}
-		
-		public Platform platform() {
-			return platform;
-		}
-		
-		public void setPlatform(Platform p) {
-			this.platform = p;
-		}
-		
-		public void clearPlatform() {
-			setPlatform(null);
-		}
-	}
+public class Player extends StackPane implements DelayUpdatable {
 	
 	private static final GravityMode DEFAULT_MODE = GravityMode.DOWN;
 	private static final double DEFAULT_WIDTH = 20, DEFAULT_HEIGHT = DEFAULT_WIDTH;
-	private static final double COLLIDE_CLAMP = 0.5, COLLIDE_FLUSH = 0.5;
+	private static final double COLLIDE_FLUSH = 0.5;
 	
 	private final StackPane red;
 	
@@ -59,6 +35,7 @@ public class Player extends StackPane {
 		
 	}
 	
+	@Override
 	public void update(long nsSinceLastFrame) {
 //		System.out.printf("%n%nUPDATE %d%n", nsSinceLastFrame);
 		
@@ -125,6 +102,14 @@ public class Player extends StackPane {
 	
 	public double y() {
 		return y;
+	}
+	
+	public double width() {
+		return getWidth();
+	}
+	
+	public double height() {
+		return getHeight();
 	}
 	
 	private double findX(double safe, double collide, Platform p) {
