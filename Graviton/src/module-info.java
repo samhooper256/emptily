@@ -4,4 +4,5 @@ module relearn {
 	requires transitive javafx.controls;
 	
 	exports base;
+	exports rooms;
 }
