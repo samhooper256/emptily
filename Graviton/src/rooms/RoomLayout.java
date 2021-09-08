@@ -2,6 +2,8 @@ package rooms;
 
 import java.util.Collection;
 
+import javafx.geometry.Point2D;
+
 public interface RoomLayout {
 	
 	static Collection<RoomLayout> all() {
@@ -12,7 +14,7 @@ public interface RoomLayout {
 		return RoomLayoutHelper.random();
 	}
 	
-	static RoomLayout of(double width, double height, RectangleLayout... rects) {
+	static RoomLayout of(double width, double height, RectangleLayoutImpl... rects) {
 		return new RoomLayoutImpl(width, height, rects);
 	}
 	
@@ -25,5 +27,11 @@ public interface RoomLayout {
 	double height();
 	
 	Collection<RectangleLayout> rectsUnmodifiable();
+	
+	default boolean intervisible(Point2D a, Point2D b) {
+		return intervisible(a.getX(), a.getY(), b.getX(), b.getY());
+	}
+	
+	boolean intervisible(double x1, double y1, double x2, double y);
 	
 }

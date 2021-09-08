@@ -1,5 +1,6 @@
 package rooms;
 
+import java.awt.geom.Line2D;
 import java.util.*;
 
 public class RoomLayoutImpl implements RoomLayout {
@@ -35,6 +36,15 @@ public class RoomLayoutImpl implements RoomLayout {
 	
 	public void addRectangles(RectangleLayout... rects) {
 		Collections.addAll(this.rects, rects);
+	}
+
+	@Override
+	public boolean intervisible(double x1, double y1, double x2, double y2) {
+		Line2D.Double line = new Line2D.Double(x1, y1, x2, y2);
+		for(RectangleLayout rect : rects)
+			if(rect.lineIntersects(line))
+				return false;
+		return true;
 	}
 
 }

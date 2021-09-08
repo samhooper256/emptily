@@ -2,7 +2,6 @@ package rooms;
 
 import java.util.*;
 
-import base.*;
 import fxutils.Lines;
 import javafx.geometry.*;
 import javafx.scene.shape.Line;
@@ -15,6 +14,7 @@ public class VisibilityGraph {
 		
 	}
 	
+	/** The returned points are in the coordinate space of the given {@link RoomLayout}.*/
 	public static Set<Point2D> pointsFor(RoomLayout room, double cornerDist) {
 		Set<Point2D> points = new HashSet<>();
 		for(RectangleLayout r : room.rectsUnmodifiable()) {
@@ -43,14 +43,24 @@ public class VisibilityGraph {
 		}
 	}
 	
-	public static Set<Line> lineSet(Set<Point2D> points, MainPane mp) {
+	/** Assumes the given points are in the coordinate space of the {@link RoomLayout}.
+	 * For example, a point of (0, 0) would represent the top left of the given room.
+	 * The coordinates of the endpoints of all lines in the returned set are shifted by
+	 * {@code shiftX} and {@code shiftY}.*/
+	public static Set<Line> lineSet(Set<Point2D> points, RoomLayout layout, double shiftX, double shiftY) {
 		System.out.printf("[enter] lineSet(points=%s)%n", points);
 		Set<Line> lines = new HashSet<>();
 		for(Point2D a : points)
 			for(Point2D b : points)
-				if(a != b && mp.intervisible(a, b))
-					lines.add(Lines.between(a, b));
+				if(a != b && layout.intervisible(a, b))
+					lines.add(Lines.between(a, b, shiftX, shiftY));
 		return lines;
+	}
+	
+	/** Assumes the given points are in the coordinate space of the {@link RoomLayout}.
+	 * For example, a point of (0, 0) would represent the top left of the given room.*/
+	public static Set<Line> lineSet(Set<Point2D> points, RoomLayout layout) {
+		return lineSet(points, layout, 0, 0);
 	}
 	
 }

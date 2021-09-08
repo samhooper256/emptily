@@ -1,37 +1,55 @@
 package rooms;
 
-public record RectangleLayout(double x, double y, double width, double height) {
+import java.awt.geom.Line2D;
+
+public interface RectangleLayout {
 	
-	public double ulx() {
-		return x;
+	double x();
+	
+	double y();
+	
+	double width();
+	
+	double height();
+	
+	default boolean lineIntersects(double x1, double y1, double x2, double y2) {
+		Line2D.Double line = new Line2D.Double(x1, y1, x2, y2);
+		return lineIntersects(line);
 	}
 	
-	public double uly() {
-		return y;
+	boolean lineIntersects(Line2D.Double line);
+	
+	
+	default double ulx() {
+		return x();
 	}
 	
-	public double urx() {
-		return x + width;
+	default double uly() {
+		return y();
 	}
 	
-	public double ury() {
-		return y;
+	default double urx() {
+		return x() + width();
 	}
 	
-	public double llx() {
-		return x;
+	default double ury() {
+		return y();
 	}
 	
-	public double lly() {
-		return y + height;
+	default double llx() {
+		return x();
 	}
 	
-	public double lrx() {
-		return x + width;
+	default double lly() {
+		return y() + height();
 	}
 	
-	public double lry() {
-		return y + height;
+	default double lrx() {
+		return x() + width();
+	}
+	
+	default double lry() {
+		return y() + height();
 	}
 	
 }

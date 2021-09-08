@@ -30,7 +30,7 @@ public class MainPane extends StackPane implements DelayUpdatable {
 		
 		platforms = new ArrayList<>();
 		
-		displayRoom(Colls.any(RoomLayout.all()), 0, 0);
+		displayRoom(Colls.any(RoomLayout.all()), 20, 0);
 		
 		removeRequests = new HashSet<>();
 		
@@ -69,10 +69,10 @@ public class MainPane extends StackPane implements DelayUpdatable {
 		Set<Point2D> points = VisibilityGraph.pointsFor(layout, 6);
 		for(Point2D p : points) {
 			Circle c = new Circle(2, Color.ORANGE);
-			Nodes.setLayout(c, p.getX(), p.getY());
+			Nodes.setLayout(c, tlx + p.getX(), tly + p.getY());
 			content.getChildren().add(c);
 		}
-		Set<Line> lines = VisibilityGraph.lineSet(points, this);
+		Set<Line> lines = VisibilityGraph.lineSet(points, layout, tlx, tly);
 		System.out.printf("lines=%s%n", lines);
 		for(Line l : lines)
 			content.getChildren().add(l);
