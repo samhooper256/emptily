@@ -2,6 +2,8 @@ package rooms;
 
 import java.awt.geom.Line2D;
 
+import javafx.geometry.Point2D;
+
 public interface RectangleLayout {
 	
 	double x();
@@ -11,6 +13,14 @@ public interface RectangleLayout {
 	double width();
 	
 	double height();
+	
+	default boolean contains(double x, double y) {
+		return x >= x() && x <= urx() && y >= y() && y <= lly();
+	}
+	
+	default boolean contains(Point2D point) {
+		return contains(point.getX(), point.getY());
+	}
 	
 	default boolean lineIntersects(double x1, double y1, double x2, double y2) {
 		Line2D.Double line = new Line2D.Double(x1, y1, x2, y2);

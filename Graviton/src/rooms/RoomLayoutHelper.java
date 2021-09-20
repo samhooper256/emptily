@@ -11,9 +11,10 @@ class RoomLayoutHelper {
 	static {
 		layouts = List.of(
 				new RoomLayoutImpl(400, 400,
-						new RectangleLayoutImpl(200, 200, 100, 100),
-						new RectangleLayoutImpl(90, 90, 100, 100),
-						new RectangleLayoutImpl(220, 110, 20, 20))
+						new RectangleLayoutImpl(100, 100, 200, 100),
+						new RectangleLayoutImpl(80, 240, 30, 10),
+						new RectangleLayoutImpl(200, 200, 100, 100)
+				)
 		);
 	}
 	

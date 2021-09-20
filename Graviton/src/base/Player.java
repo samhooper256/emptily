@@ -12,11 +12,13 @@ public class Player extends StackPane implements DelayUpdatable {
 	private static final GravityMode DEFAULT_MODE = GravityMode.DOWN;
 	private static final double DEFAULT_WIDTH = 20, DEFAULT_HEIGHT = DEFAULT_WIDTH;
 	private static final double COLLIDE_FLUSH = 0.5;
+	private static final long INVINCIBILITY_TIME = 1_000_000_000L; 
 	
 	private final StackPane color;
 	
 	private GravityMode mode;
 	private double xvel, yvel, x, y;
+	private long invincibilityTimer = 0;
 	
 	public Player() {
 		yvel = 0;
@@ -40,6 +42,15 @@ public class Player extends StackPane implements DelayUpdatable {
 		double sec = nsSinceLastFrame / 1e9;
 		double oldX = x, oldY = y;
 		double xaccel = mode.xAccel(), yaccel = mode.yAccel();
+		if(vincible()) {
+			Enemy enemy = Main.pane().getEnemyIntersectingPlayer();
+			if(enemy != null)
+				takeHit();
+		}
+		else {
+			invincibilityTimer = Math.max(invincibilityTimer - nsSinceLastFrame, 0);
+			setVisible(invincibilityTimer == 0 || (invincibilityTimer & 1L << 28) == 0);
+		}
 		
 		x += xvel;
 		y += yvel;
@@ -75,11 +86,20 @@ public class Player extends StackPane implements DelayUpdatable {
 		if(!backtrackedY)
 			yvel += yaccel * sec;
 		
-//		System.out.printf("ends with (x,y)=(%f,%f)\t\t\t(xv,yv)=(%f,%f)", x, y, xvel, yvel);
+	}
+	
+	
+	private boolean vincible() {
+		return invincibilityTimer == 0;
 	}
 	
 	private boolean intersects(Platform p) {
 		return p.getBoundsInParent().intersects(getBoundsInParent());
+	}
+	
+	public void takeHit() {
+		invincibilityTimer = INVINCIBILITY_TIME;
+		Main.healthBar().hit();
 	}
 	
 	public void setMode(GravityMode mode) {

@@ -2,26 +2,24 @@ package base;
 
 import java.util.*;
 
-import fxutils.Nodes;
 import javafx.collections.ObservableList;
 import javafx.geometry.*;
 import javafx.scene.*;
 import javafx.scene.input.KeyCode;
 import javafx.scene.layout.*;
-import javafx.scene.paint.Color;
 import javafx.scene.shape.*;
 import rooms.*;
 import utils.Colls;
 
 public class MainPane extends StackPane implements DelayUpdatable {
 
-	private record Room(RoomLayout layout, Point2D tl) {}
-	
 	private final Pane content;
 	private final Player player;
-	
 	private final Collection<Platform> platforms;
+	private final Set<Enemy> enemies;
 	private final Set<Node> removeRequests;
+
+	private RoomInfo currentInfo; //TODO better - change it when you change rooms.
 	
 	MainPane() {
 		
@@ -29,33 +27,28 @@ public class MainPane extends StackPane implements DelayUpdatable {
 		player = new Player();
 		
 		platforms = new ArrayList<>();
+		enemies = new HashSet<>();
 		
-		displayRoom(Colls.any(RoomLayout.all()), 20, 0);
+		RoomLayout layout = Colls.any(RoomLayout.all());
+		double roomx = 0, roomy = 0;
+		displayRoom(layout, roomx, roomy);
+		currentInfo = RoomInfo.re(layout, roomx, roomy);
 		
 		removeRequests = new HashSet<>();
 		
 		content.getChildren().addAll(player);
 		
 		BasicEnemy e1 = new BasicEnemy(), e2 = new BasicEnemy(), e3 = new BasicEnemy();
-		e1.setLocation(70, 70);
-		e2.setLocation(90, 90);
-		e3.setLocation(70, 150);
-		content.getChildren().addAll(e1, e2, e3);
+		e1.setLocation(20, 70);
+		e2.setLocation(120, 70);
+		e3.setLocation(220, 70);
+		addEnemies(e1, e2, e3);
 		
 		player.setLayoutX(50);
 		player.setLayoutY(300);
 		
 		getChildren().addAll(content);
 	}
-
-	private void generateRooms(int count) {
-		Set<Room> layouts = new HashSet<>();
-		Room startingRoom = new Room(RoomLayout.random(), Point2D.ZERO);
-		layouts.add(startingRoom);
-		count--;
-		//generate rooms with BFS
-	}
-	
 	
 	public void displayRoom(RoomLayout layout, double tlx, double tly) {
 		double t = layout.borderThickness(), w = layout.width(), h = layout.height();
@@ -66,16 +59,16 @@ public class MainPane extends StackPane implements DelayUpdatable {
 		addPlatforms(top, right, bottom, left);
 		for(RectangleLayout r : layout.rectsUnmodifiable())
 			addPlatforms(new Platform(tlx + r.x(), tly + r.y(), r.width(), r.height()));
-		Set<Point2D> points = VisibilityGraph.pointsFor(layout, 6);
-		for(Point2D p : points) {
-			Circle c = new Circle(2, Color.ORANGE);
-			Nodes.setLayout(c, tlx + p.getX(), tly + p.getY());
-			content.getChildren().add(c);
-		}
-		Set<Line> lines = VisibilityGraph.lineSet(points, layout, tlx, tly);
-		System.out.printf("lines=%s%n", lines);
-		for(Line l : lines)
-			content.getChildren().add(l);
+	}
+	
+	private void addEnemies(Enemy... enemies) {
+		for(Enemy e : enemies)
+			addEnemy(e);
+	}
+	
+	private void addEnemy(Enemy e) {
+		content.getChildren().addAll(e.asNode());
+		enemies.add(e);
 	}
 	
 	private void removeAllPlatforms() {
@@ -90,16 +83,10 @@ public class MainPane extends StackPane implements DelayUpdatable {
 	public void keyPressed(KeyCode code) {
 		if(KeyInput.isModeCode(code))
 			player.setMode(KeyInput.modeFor(code));
-		if(code == KeyCode.SPACE) {
-			update(1_000_000_000);
-		}
 	}
 	
 	public void leftClicked(Point2D point) {
 		Point2D playerCenter = player.center();
-//		PerspectiveCamera c = scene().camera();
-//		double cx = c.getTranslateX(), cy = c.getTranslateY();
-//		Line l = new Line(point.getX(), point.getY(), playerCenter.getX(), playerCenter.getY());
 		double xdist = point.getX() - playerCenter.getX();
 		double ydist = point.getY() - playerCenter.getY();
 		double angle = Math.toDegrees(Math.atan2(ydist, xdist));
@@ -128,10 +115,6 @@ public class MainPane extends StackPane implements DelayUpdatable {
 		return platforms;
 	}
 	
-	public MainScene scene() {
-		return (MainScene) getScene();
-	}
-	
 	public Pane content() {
 		return content;
 	}
@@ -156,6 +139,18 @@ public class MainPane extends StackPane implements DelayUpdatable {
 		return null;
 	}
 	
+	public Enemy getEnemyIntersectingPlayer() {
+		for(Enemy e : enemies)
+			if(intersectsPlayer(e))
+				return e;
+		return null;
+	}
+	
+	public boolean intersectsPlayer(Enemy enemy) {
+		Bounds enemyBounds = enemy.getBoundsInParent();
+		return enemyBounds.intersects(player.getBoundsInParent());
+	}
+	
 	/** Requests to removes the given {@link Node} from the {@link #content()}'s children at the
 	 * end of this {@link #update(long) update} pulse.*/
 	public boolean requestRemove(Node node) {
@@ -176,6 +171,10 @@ public class MainPane extends StackPane implements DelayUpdatable {
 		}
 		content.getChildren().remove(l);
 		return true;
+	}
+	
+	public RoomInfo roomInfo() {
+		return currentInfo;
 	}
 	
 }

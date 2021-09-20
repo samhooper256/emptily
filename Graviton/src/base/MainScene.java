@@ -5,21 +5,19 @@ import javafx.geometry.*;
 import javafx.scene.*;
 import javafx.scene.input.*;
 
-public class MainScene extends Scene implements DelayUpdatable {
-	
-	private static final double DEFAULT_WIDTH = 640, DEFAULT_HEIGHT = DEFAULT_WIDTH * 9 / 16;
+public class MainScene extends SubScene implements DelayUpdatable {
 	
 	private final MainPane root;
 	private final PerspectiveCamera camera;
 	
 	public MainScene() {
-		this(new MainPane(), DEFAULT_WIDTH, DEFAULT_HEIGHT);
+		this(new MainPane(), 0, 0);
 	}
 	
 	private MainScene(MainPane root, double width, double height) {
 		super(root, width, height);
 		this.root = root;
-		setOnKeyPressed(this::keyEvent);
+		setOnKeyPressed(this::keyPressed);
 		setOnMouseClicked(this::mouseEvent);
 		setOnScroll(this::scrollEvent);
 		camera = new PerspectiveCamera();
@@ -32,7 +30,7 @@ public class MainScene extends Scene implements DelayUpdatable {
 		return root;
 	}
 	
-	private void keyEvent(KeyEvent ke) {
+	void keyPressed(KeyEvent ke) {
 		root.keyPressed(ke.getCode());
 	}
 	

@@ -1,7 +1,10 @@
 package base;
 
 import javafx.geometry.Bounds;
+import javafx.scene.Node;
 
+/** All concrete classes that implement {@link Enemy} must be a subclass of {@link Node}. Implementing
+ * classes should not override {@link Object#equals(Object) equals} or {@link Object#hashCode() hashCode}. */
 public interface Enemy {
 	
 	Bounds getBoundsInParent();
@@ -25,6 +28,10 @@ public interface Enemy {
 	
 	default double y() {
 		return getLayoutY();
+	}
+	
+	default Node asNode() {
+		return (Node) this;
 	}
 	
 }
