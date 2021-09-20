@@ -89,8 +89,8 @@ public class MainPane extends StackPane implements DelayUpdatable {
 		Point2D playerCenter = player.center();
 		double xdist = point.getX() - playerCenter.getX();
 		double ydist = point.getY() - playerCenter.getY();
-		double angle = Math.toDegrees(Math.atan2(ydist, xdist));
-		content.getChildren().add(new LineBullet(playerCenter.getX(), playerCenter.getY(), angle));
+		double angdeg = Math.toDegrees(Math.atan2(ydist, xdist));
+		content.getChildren().add(new LineBullet(playerCenter.getX(), playerCenter.getY(), angdeg));
 	}
 	
 	@Override

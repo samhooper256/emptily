@@ -1,8 +1,8 @@
 package rooms;
 
-import java.util.Collection;
+import java.util.*;
 
-import javafx.geometry.Point2D;
+import javafx.geometry.*;
 
 public interface RoomLayout {
 	
@@ -14,8 +14,8 @@ public interface RoomLayout {
 		return RoomLayoutHelper.random();
 	}
 	
-	static RoomLayout of(double width, double height, RectangleLayoutImpl... rects) {
-		return new RoomLayoutImpl(width, height, rects);
+	static LayoutBuilder builder() {
+		return new LayoutBuilder();
 	}
 	
 	default double borderThickness() {
@@ -27,6 +27,21 @@ public interface RoomLayout {
 	double height();
 	
 	Collection<RectangleLayout> rectsUnmodifiable();
+	
+	Map<Side, Set<DoorGap>> gaps();
+	
+	default Set<DoorGap> gaps(Side side) {
+		return gaps().get(side);
+	}
+
+	default int gapCount(Side side) {
+		return gaps(side).size();
+	}
+	
+	/** Returns {@code true} iff this {@link RoomLayout} has at least one {@link DoorGap} on the given {@link Side}.*/
+	default boolean hasGap(Side side) {
+		return !gaps(side).isEmpty();
+	}
 	
 	/** Assumes the given point is in the coordinate space of room. Returns {@code true} if any of this
 	 * room's {@link #rectsUnmodifiable() rectangles} contain the given point.*/

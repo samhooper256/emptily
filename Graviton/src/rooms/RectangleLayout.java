@@ -6,6 +6,10 @@ import javafx.geometry.Point2D;
 
 public interface RectangleLayout {
 	
+	static RectangleLayout of(double x, double y, double width, double height) {
+		return new RectangleLayoutImpl(x, y, width, height);
+	}
+	
 	double x();
 	
 	double y();
