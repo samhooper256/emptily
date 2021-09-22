@@ -17,7 +17,7 @@ public final class HealthBar extends HBox {
 	
 	public HealthBar(int maxhp) {
 		super(SPACING);
-		setPadding(new Insets(8));
+		setPadding(new Insets(PADDING));
 		this.maxhp = this.hp = maxhp;
 		for(int i = 0; i < maxhp; i++)
 			getChildren().add(new HealthIcon());

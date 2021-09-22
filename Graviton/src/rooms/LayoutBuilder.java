@@ -42,7 +42,7 @@ public final class LayoutBuilder {
 		if(rects == null)
 			rects = new RectangleLayout[0];
 		if(gaps == null || gaps.length == 0)
-			throw new IllegalStateException("DoorGaps have not been configured properly."
+			throw new IllegalStateException("DoorGaps have not been configured properly. "
 					+ "There must be at least one gap.");
 		return new RoomLayoutImpl(width, height, rects, gaps);
 	}

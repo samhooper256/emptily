@@ -51,15 +51,43 @@ public class MainPane extends StackPane implements DelayUpdatable {
 	}
 	
 	public void displayRoom(RoomLayout layout, double tlx, double tly) {
-		double t = layout.borderThickness(), w = layout.width(), h = layout.height();
-		Platform top = new Platform(tlx, tly, w, t);
-		Platform right = new Platform(tlx + w - t, tly, t, h);
-		Platform bottom = new Platform(tlx, tly + h - t, w, t);
-		Platform left = new Platform(tlx, tly, t, h);
-		addPlatforms(top, right, bottom, left);
+		double t = layout.borderThickness(), iw = layout.interiorWidth(), ih = layout.interiorHeight();
+		displayHorizontalSide(iw, t, tlx, tly, layout.topGaps());
+		displayHorizontalSide(iw, t, tlx, tly + t + ih, layout.bottomGaps());
+		displayVerticalSide(ih, t, tlx, tly, layout.leftGaps());
+		displayVerticalSide(ih, t, tlx + t + iw, tly, layout.rightGaps());
 		for(RectangleLayout r : layout.rectsUnmodifiable())
 			addPlatforms(new Platform(tlx + r.x(), tly + r.y(), r.width(), r.height()));
 	}
+	
+	private void displayHorizontalSide(double iw, double t, double x0, double y,
+			HorizontalGapCollection gcoll) {
+		double x = x0;
+		//assuming 1+ gaps:
+		List<HorizontalGap> hgaps = gcoll.sorted(WallDirection.LEFT_TO_RIGHT);
+		for(int i = 0; i < hgaps.size(); i++) {
+			HorizontalGap gap = hgaps.get(i);
+			Platform p = Platform.fromCorners(x, y, x0 + t + gap.leftDist(), y + t);
+			addPlatform(p);
+			x = x0 + t + iw - gap.rightDist();
+		}
+		//draw last section, after the last gap:
+		addPlatform(Platform.fromCorners(x, y, x0 + iw + 2 * t, y + t));
+	}
+	
+	private void displayVerticalSide(double ih, double t, double x, double y0, VerticalGapCollection vcoll) {
+		double y = y0;
+		List<VerticalGap> vgaps = vcoll.sorted(WallDirection.TOP_TO_BOTTOM);
+		System.out.printf("vertical side, vgaps=%s%n", vgaps);
+		for(int i = 0; i < vgaps.size(); i++) {
+			VerticalGap gap = vgaps.get(i);
+			Platform p = Platform.fromCorners(x, y, x + t, y0 + t + gap.topDist());
+			addPlatform(p);
+			y = y0 + t + ih - gap.bottomDist();
+		}
+		addPlatform(Platform.fromCorners(x, y, x + t, y0 + 2 * t + ih));
+	}
+	
 	
 	private void addEnemies(Enemy... enemies) {
 		for(Enemy e : enemies)
@@ -73,6 +101,11 @@ public class MainPane extends StackPane implements DelayUpdatable {
 	
 	private void removeAllPlatforms() {
 		content.getChildren().removeAll(platforms);
+	}
+	
+	private void addPlatform(Platform platform) {
+		content.getChildren().add(platform);
+		this.platforms.add(platform);
 	}
 	
 	private void addPlatforms(Platform... platforms) {

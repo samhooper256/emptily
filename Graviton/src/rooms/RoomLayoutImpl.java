@@ -3,20 +3,18 @@ package rooms;
 import java.awt.geom.Line2D;
 import java.util.*;
 
-import javafx.geometry.Side;
-
 public class RoomLayoutImpl implements RoomLayout {
 
 	private final double width, height;
 	private final HashSet<RectangleLayout> rects;
-	private final Map<Side, Set<DoorGap>> gaps;
+	private HorizontalGapCollection topGaps, bottomGaps;
+	private VerticalGapCollection leftGaps, rightGaps;
 	
 	public RoomLayoutImpl(double width, double height, RectangleLayout[] rects, DoorGap[] gaps) {
 		this.width = width;
 		this.height = height;
 		this.rects = new HashSet<>();
 		initRectangles(rects);
-		this.gaps = new HashMap<>();
 		initGaps(gaps);
 	}
 	
@@ -25,23 +23,29 @@ public class RoomLayoutImpl implements RoomLayout {
 	}
 	
 	private void initGaps(DoorGap[] gapsArr) {
+		Set<HorizontalGap> tgaps = new HashSet<>(), bgaps = new HashSet<>();
+		Set<VerticalGap> lgaps = new HashSet<>(), rgaps = new HashSet<>();
 		for(DoorGap gap : gapsArr) {
-			if(!gaps.containsKey(gap.side()))
-				gaps.put(gap.side(), new HashSet<>());
-			gaps.get(gap.side()).add(gap);
+			switch(gap.side()) {
+				case TOP -> tgaps.add(gap.asHorizontal());
+				case BOTTOM -> bgaps.add(gap.asHorizontal());
+				case LEFT -> lgaps.add(gap.asVertical());
+				case RIGHT -> rgaps.add(gap.asVertical());
+			}
 		}
-		for(Side s : Side.values())
-			if(!gaps.containsKey(s))
-				gaps.put(s, Collections.emptySet());
+		topGaps = new HorizontalGapCollectionImpl(tgaps);
+		bottomGaps = new HorizontalGapCollectionImpl(bgaps);
+		leftGaps = new VerticalGapCollectionImpl(lgaps);
+		rightGaps = new VerticalGapCollectionImpl(rgaps);
 	}
 	
 	@Override
-	public double width() {
+	public double exteriorWidth() {
 		return width;
 	}
 
 	@Override
-	public double height() {
+	public double exteriorHeight() {
 		return height;
 	}
 
@@ -60,8 +64,23 @@ public class RoomLayoutImpl implements RoomLayout {
 	}
 
 	@Override
-	public Map<Side, Set<DoorGap>> gaps() {
-		return gaps;
+	public HorizontalGapCollection topGaps() {
+		return topGaps;
+	}
+
+	@Override
+	public HorizontalGapCollection bottomGaps() {
+		return bottomGaps;
+	}
+
+	@Override
+	public VerticalGapCollection leftGaps() {
+		return leftGaps;
+	}
+
+	@Override
+	public VerticalGapCollection rightGaps() {
+		return rightGaps;
 	}
 
 }

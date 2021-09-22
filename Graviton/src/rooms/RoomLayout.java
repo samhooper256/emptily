@@ -22,18 +22,37 @@ public interface RoomLayout {
 		return 10;
 	}
 	
-	double width();
+	double exteriorWidth();
 	
-	double height();
+	default double interiorWidth() {
+		return exteriorWidth() - 2 * borderThickness();
+	}
+	
+	double exteriorHeight();
+	
+	default double interiorHeight() {
+		return exteriorHeight() - 2 * borderThickness();
+	}
 	
 	Collection<RectangleLayout> rectsUnmodifiable();
 	
-	Map<Side, Set<DoorGap>> gaps();
-	
-	default Set<DoorGap> gaps(Side side) {
-		return gaps().get(side);
+	default DoorGapCollection<? extends DoorGap> gaps(Side side) {
+		return switch(side) {
+			case TOP -> topGaps();
+			case BOTTOM -> bottomGaps();
+			case LEFT -> leftGaps();
+			case RIGHT -> rightGaps();
+		};
 	}
-
+	
+	HorizontalGapCollection topGaps();
+	
+	HorizontalGapCollection bottomGaps();
+	
+	VerticalGapCollection leftGaps();
+	
+	VerticalGapCollection rightGaps();
+	
 	default int gapCount(Side side) {
 		return gaps(side).size();
 	}
