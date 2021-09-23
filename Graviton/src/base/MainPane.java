@@ -18,7 +18,7 @@ public class MainPane extends StackPane implements DelayUpdatable {
 	private final Collection<Platform> platforms;
 	private final Set<Enemy> enemies;
 	private final Set<Node> removeRequests;
-
+	
 	private RoomInfo currentInfo; //TODO better - change it when you change rooms.
 	
 	MainPane() {
@@ -78,7 +78,6 @@ public class MainPane extends StackPane implements DelayUpdatable {
 	private void displayVerticalSide(double ih, double t, double x, double y0, VerticalGapCollection vcoll) {
 		double y = y0;
 		List<VerticalGap> vgaps = vcoll.sorted(WallDirection.TOP_TO_BOTTOM);
-		System.out.printf("vertical side, vgaps=%s%n", vgaps);
 		for(int i = 0; i < vgaps.size(); i++) {
 			VerticalGap gap = vgaps.get(i);
 			Platform p = Platform.fromCorners(x, y, x + t, y0 + t + gap.topDist());
@@ -134,8 +133,11 @@ public class MainPane extends StackPane implements DelayUpdatable {
 				du.update(nsSinceLastFrame);
 		
 		ObservableList<Node> contentChildren = content().getChildren();
-		for(Node n : removeRequests)
-			contentChildren.remove(n);
+		for(Node n : removeRequests) {
+			boolean result = contentChildren.remove(n);
+			if(result && n instanceof Enemy)
+				enemies.remove(n);
+		}
 		removeRequests.clear();
 		
 	}

@@ -52,9 +52,16 @@ public interface RoomLayout {
 	VerticalGapCollection leftGaps();
 	
 	VerticalGapCollection rightGaps();
+
+	DoorGapCollection<DoorGap> gaps();
 	
 	default int gapCount(Side side) {
 		return gaps(side).size();
+	}
+	
+	/** Returns the total number of gaps on all sides of the room. */
+	default int gapCount() {
+		return gapCount(Side.TOP) + gapCount(Side.BOTTOM) + gapCount(Side.LEFT) + gapCount(Side.RIGHT);
 	}
 	
 	/** Returns {@code true} iff this {@link RoomLayout} has at least one {@link DoorGap} on the given {@link Side}.*/
@@ -77,6 +84,10 @@ public interface RoomLayout {
 	}
 	
 	/** Assumes points are in the coordinate space of this room.*/
-	boolean intervisible(double x1, double y1, double x2, double y);
+	default boolean intervisible(double x1, double y1, double x2, double y2) {
+		return !lineIntersects(x1, y1, x2, y2);
+	}
+	
+	boolean lineIntersects(double x1, double y1, double x2, double y2);
 	
 }

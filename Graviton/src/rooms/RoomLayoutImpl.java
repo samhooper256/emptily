@@ -9,6 +9,7 @@ public class RoomLayoutImpl implements RoomLayout {
 	private final HashSet<RectangleLayout> rects;
 	private HorizontalGapCollection topGaps, bottomGaps;
 	private VerticalGapCollection leftGaps, rightGaps;
+	private DoorGapCollection<DoorGap> allGaps;
 	
 	public RoomLayoutImpl(double width, double height, RectangleLayout[] rects, DoorGap[] gaps) {
 		this.width = width;
@@ -37,6 +38,7 @@ public class RoomLayoutImpl implements RoomLayout {
 		bottomGaps = new HorizontalGapCollectionImpl(bgaps);
 		leftGaps = new VerticalGapCollectionImpl(lgaps);
 		rightGaps = new VerticalGapCollectionImpl(rgaps);
+		allGaps = DoorGapCollection.fromArbitraryGaps(Arrays.asList(gapsArr));
 	}
 	
 	@Override
@@ -55,14 +57,14 @@ public class RoomLayoutImpl implements RoomLayout {
 	}
 	
 	@Override
-	public boolean intervisible(double x1, double y1, double x2, double y2) {
+	public boolean lineIntersects(double x1, double y1, double x2, double y2) {
 		Line2D.Double line = new Line2D.Double(x1, y1, x2, y2);
 		for(RectangleLayout rect : rects)
 			if(rect.lineIntersects(line))
-				return false;
-		return true;
+				return true;
+		return false;
 	}
-
+	
 	@Override
 	public HorizontalGapCollection topGaps() {
 		return topGaps;
@@ -83,4 +85,9 @@ public class RoomLayoutImpl implements RoomLayout {
 		return rightGaps;
 	}
 
+	@Override
+	public DoorGapCollection<DoorGap> gaps() {
+		return allGaps;
+	}
+	
 }
