@@ -6,6 +6,8 @@ import javafx.geometry.*;
 
 public interface RoomLayout {
 	
+	double DEFAULT_BORDER_THICKNESS = 10;
+	
 	static List<RoomLayout> all() {
 		return RoomLayoutHelper.all();
 	}
@@ -19,7 +21,7 @@ public interface RoomLayout {
 	}
 	
 	default double borderThickness() {
-		return 10;
+		return DEFAULT_BORDER_THICKNESS;
 	}
 	
 	double exteriorWidth();

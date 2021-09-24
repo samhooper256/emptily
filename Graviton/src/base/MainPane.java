@@ -43,7 +43,7 @@ public class MainPane extends StackPane implements DelayUpdatable {
 		
 		BasicEnemy e1 = new BasicEnemy(), e2 = new BasicEnemy(), e3 = new BasicEnemy();
 		e1.setLocation(20, 70);
-		e2.setLocation(120, 70);
+		e2.setLocation(170, 210);
 		e3.setLocation(220, 70);
 		addEnemies(e1, e2, e3);
 		
