@@ -70,4 +70,7 @@ public sealed interface DoorGap permits HorizontalGap, VerticalGap {
 		return (VerticalGap) this;
 	}
 	
+	/** Returns the opening size of this {@link DoorGap} if it were part of the given {@link RoomLayout}.*/
+	double sizeIn(RoomLayout room);
+	
 }

@@ -35,4 +35,9 @@ public sealed interface HorizontalGap extends DoorGap permits HorizontalGapImpl 
 		return layout.interiorWidth() - leftDist() - rightDist();
 	}
 	
+	@Override
+	default double sizeIn(RoomLayout room) {
+		return room.interiorWidth() - leftDist() - rightDist();
+	}
+	
 }

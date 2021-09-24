@@ -58,7 +58,7 @@ public class BasicEnemy extends Rectangle implements HittableEnemy, DelayUpdatab
 		}
 		else {
 			boolean lostSightOfPlayer = oldCanSeePlayer;
-			if(!mustStayOnPath() && (lostSightOfPlayer || isAtEndOfPath()))
+			if(!hasPath() || (!mustStayOnPath() && (lostSightOfPlayer || isAtEndOfPath())))
 				createNewPath();
 			runPath(nsSinceLastFrame);
 		}

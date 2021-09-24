@@ -6,7 +6,7 @@ import javafx.geometry.*;
 
 public interface RoomLayout {
 	
-	static Collection<RoomLayout> all() {
+	static List<RoomLayout> all() {
 		return RoomLayoutHelper.all();
 	}
 	

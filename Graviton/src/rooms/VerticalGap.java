@@ -30,4 +30,9 @@ public sealed interface VerticalGap extends DoorGap permits VerticalGapImpl {
 	@Override
 	Side side();
 	
+	@Override
+	default double sizeIn(RoomLayout room) {
+		return room.interiorHeight() - topDist() - bottomDist();
+	}
+	
 }

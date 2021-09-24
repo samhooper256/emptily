@@ -20,6 +20,7 @@ public class MainPane extends StackPane implements DelayUpdatable {
 	private final Set<Node> removeRequests;
 	
 	private RoomInfo currentInfo; //TODO better - change it when you change rooms.
+	private FloorPlan floorPlan;
 	
 	MainPane() {
 		
@@ -29,10 +30,12 @@ public class MainPane extends StackPane implements DelayUpdatable {
 		platforms = new ArrayList<>();
 		enemies = new HashSet<>();
 		
-		RoomLayout layout = Colls.any(RoomLayout.all());
-		double roomx = 0, roomy = 0;
-		displayRoom(layout, roomx, roomy);
-		currentInfo = RoomInfo.re(layout, roomx, roomy);
+		floorPlan = new FloorPlanBuilder(RoomLayout.all(), 23, 80, 20).build();
+		currentInfo = floorPlan.startingRoom();
+		
+		for(RoomInfo ri : floorPlan.rooms())
+			displayRoom(ri);
+		
 		
 		removeRequests = new HashSet<>();
 		
@@ -48,6 +51,10 @@ public class MainPane extends StackPane implements DelayUpdatable {
 		player.setLayoutY(300);
 		
 		getChildren().addAll(content);
+	}
+	
+	public void displayRoom(RoomInfo info) {
+		displayRoom(info.layout(), info.tlx(), info.tly());
 	}
 	
 	public void displayRoom(RoomLayout layout, double tlx, double tly) {
