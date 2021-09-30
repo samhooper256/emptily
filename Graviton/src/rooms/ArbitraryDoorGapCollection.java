@@ -21,5 +21,15 @@ final class ArbitraryDoorGapCollection implements DoorGapCollection<DoorGap> {
 	public int size() {
 		return backing.size();
 	}
+
+	@Override
+	public boolean remove(DoorGap gap) {
+		return backing.remove(gap);
+	}
+	
+	@Override
+	public String toString() {
+		return backing.toString();
+	}
 	
 }

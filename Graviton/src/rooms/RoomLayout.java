@@ -1,12 +1,19 @@
 package rooms;
 
 import java.util.*;
+import java.util.function.Predicate;
 
 import javafx.geometry.*;
 
 public interface RoomLayout {
 	
 	double DEFAULT_BORDER_THICKNESS = 10;
+	
+	static RoomLayout copyOf(RoomLayout rl) {
+		if(rl == null)
+			return null;
+		return rl.copy();
+	}
 	
 	static List<RoomLayout> all() {
 		return RoomLayoutHelper.all();
@@ -36,7 +43,9 @@ public interface RoomLayout {
 		return exteriorHeight() - 2 * borderThickness();
 	}
 	
-	Collection<RectangleLayout> rectsUnmodifiable();
+	/** Returns all of the rectangle <em>inside</em> this room. The returned {@link Collection} does <em>not</em>
+	 * contain the walls of this {@link RoomLayout}.*/
+	Collection<RectangleLayout> interiorRectsUnmodifiable();
 	
 	default DoorGapCollection<? extends DoorGap> gaps(Side side) {
 		return switch(side) {
@@ -72,9 +81,9 @@ public interface RoomLayout {
 	}
 	
 	/** Assumes the given point is in the coordinate space of room. Returns {@code true} if any of this
-	 * room's {@link #rectsUnmodifiable() rectangles} contain the given point.*/
+	 * room's {@link #interiorRectsUnmodifiable() rectangles} contain the given point.*/
 	default boolean containsInRect(Point2D point) {
-		for(RectangleLayout r : rectsUnmodifiable())
+		for(RectangleLayout r : interiorRectsUnmodifiable())
 			if(r.contains(point))
 				return true;
 		return false;
@@ -90,6 +99,14 @@ public interface RoomLayout {
 		return !lineIntersects(x1, y1, x2, y2);
 	}
 	
+	/** Returns {@code true} iff the given line intersects this {@link RoomLayout}. Assumes the given coordinates are in
+	 * the local coordinate space of this room - that is, (0, 0) is the top-left corner of this room. This method
+	 * <em>does</em> include the walls of this room, but it ignores {@linkplain #gaps() gaps}. */
 	boolean lineIntersects(double x1, double y1, double x2, double y2);
+	
+	/** removes all {@link DoorGap DoorGaps} from this {@link RoomLayout} that satisfy the given condition. */
+	void removeGapsIf(Predicate<? super DoorGap> predicate);
+	
+	RoomLayout copy();
 	
 }

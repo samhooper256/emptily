@@ -1,7 +1,7 @@
 package rooms;
 
-import java.util.Set;
+import java.util.*;
 
-record FloorPlanImpl(RoomInfo startingRoom, Set<RoomInfo> rooms, Set<HallwayInfo> hallways) implements FloorPlan {
+record FloorPlanImpl(RoomInfo startingRoom, Set<RoomInfo> rooms, List<HallwayInfo> hallways) implements FloorPlan {
 
 }

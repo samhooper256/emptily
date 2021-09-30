@@ -145,7 +145,7 @@ public class VisibilityGraph {
 	/** The returned points are in the coordinate space of the given {@link RoomLayout}.*/
 	public static Set<Point2D> pointsFor(RoomLayout room, double cornerDist) {
 		Set<Point2D> points = new HashSet<>();
-		for(RectangleLayout r : room.rectsUnmodifiable()) {
+		for(RectangleLayout r : room.interiorRectsUnmodifiable()) {
 			points.add(new Point2D(r.ulx() - cornerDist, r.uly() - cornerDist));
 			points.add(new Point2D(r.urx() + cornerDist, r.ury() - cornerDist));
 			points.add(new Point2D(r.llx() - cornerDist, r.lly() + cornerDist));

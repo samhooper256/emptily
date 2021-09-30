@@ -39,5 +39,18 @@ public final class VerticalGapCollectionImpl implements VerticalGapCollection {
 			default -> throw new IllegalArgumentException(String.format("Invalid direction: %s", direction));
 		};
 	}
+
+	@Override
+	public boolean remove(DoorGap gap) {
+		boolean result = baseGaps.remove(gap);
+		sortedTB.remove(gap);
+		sortedBT.remove(gap);
+		return result;
+	}
+	
+	@Override
+	public String toString() {
+		return baseGaps.toString();
+	}
 	
 }

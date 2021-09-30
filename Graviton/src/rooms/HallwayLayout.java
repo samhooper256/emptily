@@ -4,6 +4,9 @@ import java.awt.geom.Line2D;
 
 public interface HallwayLayout {
 	
+	static HallwayLayout of(double width, double length, double wallWidth, boolean vertical) {
+		return new HallwayLayoutImpl(width, length, wallWidth, vertical);
+	}
 	/** The distance from the interior side of one wall of the hallway to the interior side of the other wall.*/
 	double width();
 	

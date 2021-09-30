@@ -2,6 +2,14 @@ package rooms;
 
 public interface HallwayInfo {
 
+	static HallwayInfo of(double tlx, double tly, double width, double length, double wallWidth, boolean vertical) {
+		return of(tlx, tly, HallwayLayout.of(width, length, wallWidth, vertical));
+	}
+	
+	static HallwayInfo of(double tlx, double tly, HallwayLayout info) {
+		return new HallwayInfoImpl(info, tlx, tly);
+	}
+	
 	HallwayLayout layout();
 	
 	double tlx();

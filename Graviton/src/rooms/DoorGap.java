@@ -69,6 +69,10 @@ public sealed interface DoorGap permits HorizontalGap, VerticalGap {
 			throw new IllegalStateException("This is not a VerticalGap");
 		return (VerticalGap) this;
 	}
+
+	default double sizeIn(RoomInfo room) {
+		return sizeIn(room.layout());
+	}
 	
 	/** Returns the opening size of this {@link DoorGap} if it were part of the given {@link RoomLayout}.*/
 	double sizeIn(RoomLayout room);

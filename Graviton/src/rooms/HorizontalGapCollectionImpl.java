@@ -35,4 +35,17 @@ final class HorizontalGapCollectionImpl implements HorizontalGapCollection {
 		};
 	}
 
+	@Override
+	public boolean remove(DoorGap gap) {
+		boolean result = baseGaps.remove(gap);
+		sortedLR.remove(gap);
+		sortedRL.remove(gap);
+		return result;
+	}
+
+	@Override
+	public String toString() {
+		return baseGaps.toString();
+	}
+	
 }

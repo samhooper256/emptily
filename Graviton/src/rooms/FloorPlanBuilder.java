@@ -8,6 +8,8 @@ import utils.*;
 
 public final class FloorPlanBuilder {
 
+	private static final double DEFAULT_HALLWAY_WALL_WIDTH = 10;
+	
 	private static Iterable<DoorGap> randomOrder(DoorGapCollection<DoorGap> gaps) {
 		ArrayList<DoorGap> a = new ArrayList<>(gaps.size());
 		for(DoorGap g : gaps)
@@ -20,6 +22,10 @@ public final class FloorPlanBuilder {
 	private final int desiredRoomCount;
 	private final double hallwayLength, hallwayWallWidth;
 	
+	public FloorPlanBuilder(List<RoomLayout> layoutChoices, int desiredRoomCount, double hallwayLength) {
+		this(layoutChoices, desiredRoomCount, hallwayLength, DEFAULT_HALLWAY_WALL_WIDTH);
+	}
+	
 	public FloorPlanBuilder(List<RoomLayout> layoutChoices, int desiredRoomCount, double hallwayLength, 
 			double hallwayWallWidth) {
 		this.layoutChoices = layoutChoices;
@@ -30,19 +36,29 @@ public final class FloorPlanBuilder {
 
 	private Queue<RoomInfo> q;
 	private Map<RoomInfo, Set<DoorGap>> usedGaps;
-	private Set<HallwayInfo> hallways;
+	private List<HallwayInfo> hallways;
 	
 	public FloorPlan build() {
 		q = new ArrayDeque<>();
 		usedGaps = new HashMap<>();
-		hallways = new HashSet<>();
+		hallways = new ArrayList<>();
 		RoomLayout startLayout = getRandomLayout();
 		RoomInfo startInfo = RoomInfo.re(startLayout, 0, 0);
 		q.add(startInfo);
 		usedGaps.put(startInfo, new HashSet<>());
 		for(int i = 0; i < desiredRoomCount - 1; i++)
 			addRoom();
-		return FloorPlan.of(startInfo, usedGaps.keySet(), Collections.emptySet()); //TODO no empty set
+		System.out.printf("usedGaps: %s%n", usedGaps);
+		for(Map.Entry<RoomInfo, Set<DoorGap>> e : usedGaps.entrySet()) {
+			System.out.printf("\te=%s%n", e);
+			Set<DoorGap> used = e.getValue();
+			RoomInfo r = e.getKey();
+			System.out.printf("\troom gaps: %s%n", r.layout().gaps());
+			r.layout().removeGapsIf(g -> !used.contains(g));
+			System.out.printf("\troom gaps remaining: %s%n%n", r.layout().gaps());
+		}
+		
+		return FloorPlan.of(startInfo, usedGaps.keySet(), hallways);
 	}
 	
 	private void addRoom() {
@@ -122,6 +138,8 @@ public final class FloorPlanBuilder {
 		return q.stream().map(ri -> String.format("(%.1f, %.1f)", ri.tlx() / 480, ri.tly() / 480))
 				.collect(Collectors.joining(", "));
 	}
+	
+	/** o is the new room.*/
 	private boolean tryPlace(RoomInfo i, DoorGap igap, RoomLayout olayout, DoorGap ogap, double tlx, double tly) {
 		if(canPlaceRoom(olayout, tlx, tly)) {
 			RoomInfo o = RoomInfo.re(olayout, tlx, tly);
@@ -132,6 +150,7 @@ public final class FloorPlanBuilder {
 				q.add(o);
 			if(allGapsUsed(i))
 				q.remove();
+			hallways.add(makeHallway(i, igap, o, ogap));
 			return true;
 		}
 		return false;
@@ -154,6 +173,38 @@ public final class FloorPlanBuilder {
 		return true;
 	}
 	
+	private HallwayInfo makeHallway(RoomInfo from, DoorGap fromGap, RoomInfo to, DoorGap toGap) {
+		if(fromGap.isHorizontal()) {
+			RoomInfo topRoom;
+			HorizontalGap topGap;
+			if(from.tly() < to.tly()) {
+				topGap = (HorizontalGap) fromGap;
+				topRoom = from;
+			}
+			else {
+				topGap = (HorizontalGap) toGap;
+				topRoom = to;
+			}
+			double x = topRoom.tlx() + topRoom.layout().borderThickness() + topGap.leftDist() - hallwayWallWidth;
+			double y = topRoom.tly() + topRoom.layout().exteriorHeight();
+			return HallwayInfo.of(x, y, topGap.sizeIn(topRoom), hallwayLength, hallwayWallWidth, true);
+		}
+		else {
+			RoomInfo leftRoom;
+			VerticalGap leftGap;
+			if(from.tlx() < to.tlx()) {
+				leftGap = (VerticalGap) fromGap;
+				leftRoom = from;
+			}
+			else {
+				leftGap = (VerticalGap) toGap;
+				leftRoom = to;
+			}
+			double x = leftRoom.tlx() + leftRoom.layout().exteriorWidth();
+			double y = leftRoom.tly() + leftRoom.layout().borderThickness() + leftGap.topDist() - hallwayWallWidth;
+			return HallwayInfo.of(x, y, leftGap.sizeIn(leftRoom), hallwayLength, hallwayWallWidth, false);
+		}
+	}
 	
 	private Set<DoorGap> usedGaps(RoomInfo info) {
 		if(!usedGaps.containsKey(info))
@@ -162,7 +213,9 @@ public final class FloorPlanBuilder {
 	}
 	
 	private RoomLayout getRandomLayout() {
-		return layoutChoices.get(RNG.intExclusive(0, layoutChoices.size()));
+		//If we don't make a copy of it, then when we remove the gaps later, it will remove those gaps
+		//from all rooms sharing that layout - not good!
+		return RoomLayout.copyOf(layoutChoices.get(RNG.intExclusive(0, layoutChoices.size())));
 	}
 	
 	private int gapsRemaining(RoomInfo info) {

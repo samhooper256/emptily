@@ -1,10 +1,10 @@
 package rooms;
 
-import java.util.Set;
+import java.util.*;
 
 public interface FloorPlan {
 	
-	static FloorPlan of(RoomInfo startingRoom, Set<RoomInfo> rooms, Set<HallwayInfo> hallways) {
+	static FloorPlan of(RoomInfo startingRoom, Set<RoomInfo> rooms, List<HallwayInfo> hallways) {
 		return new FloorPlanImpl(startingRoom, rooms, hallways);
 	}
 
@@ -12,6 +12,6 @@ public interface FloorPlan {
 	
 	Set<RoomInfo> rooms();
 	
-	Set<HallwayInfo> hallways();
+	Collection<HallwayInfo> hallways();
 	
 }

@@ -9,7 +9,6 @@ import javafx.scene.input.KeyCode;
 import javafx.scene.layout.*;
 import javafx.scene.shape.*;
 import rooms.*;
-import utils.Colls;
 
 public class MainPane extends StackPane implements DelayUpdatable {
 
@@ -30,12 +29,14 @@ public class MainPane extends StackPane implements DelayUpdatable {
 		platforms = new ArrayList<>();
 		enemies = new HashSet<>();
 		
-		floorPlan = new FloorPlanBuilder(RoomLayout.all(), 23, 80, 20).build();
+		floorPlan = new FloorPlanBuilder(RoomLayout.all(), 6, 80).build();
 		currentInfo = floorPlan.startingRoom();
 		
 		for(RoomInfo ri : floorPlan.rooms())
 			displayRoom(ri);
 		
+		for(HallwayInfo hi : floorPlan.hallways())
+			displayHallway(hi);
 		
 		removeRequests = new HashSet<>();
 		
@@ -51,6 +52,7 @@ public class MainPane extends StackPane implements DelayUpdatable {
 		player.setLayoutY(300);
 		
 		getChildren().addAll(content);
+		
 	}
 	
 	public void displayRoom(RoomInfo info) {
@@ -63,7 +65,7 @@ public class MainPane extends StackPane implements DelayUpdatable {
 		displayHorizontalSide(iw, t, tlx, tly + t + ih, layout.bottomGaps());
 		displayVerticalSide(ih, t, tlx, tly, layout.leftGaps());
 		displayVerticalSide(ih, t, tlx + t + iw, tly, layout.rightGaps());
-		for(RectangleLayout r : layout.rectsUnmodifiable())
+		for(RectangleLayout r : layout.interiorRectsUnmodifiable())
 			addPlatforms(new Platform(tlx + r.x(), tly + r.y(), r.width(), r.height()));
 	}
 	
@@ -94,6 +96,18 @@ public class MainPane extends StackPane implements DelayUpdatable {
 		addPlatform(Platform.fromCorners(x, y, x + t, y0 + 2 * t + ih));
 	}
 	
+	private void displayHallway(HallwayInfo hi) {
+		HallwayLayout hl = hi.layout();
+		double tlx = hi.tlx(), tly = hi.tly();
+		if(hl.isVertical()) {
+			addPlatform(new Platform(tlx, tly, hl.wallWidth(), hl.length()));
+			addPlatform(new Platform(tlx + hl.wallWidth() + hl.width(), tly, hl.wallWidth(), hl.length()));
+		}
+		else {
+			addPlatform(new Platform(tlx, tly, hl.length(), hl.wallWidth()));
+			addPlatform(new Platform(tlx, tly + hl.wallWidth() + hl.width(), hl.length(), hl.wallWidth()));
+		}
+	}	
 	
 	private void addEnemies(Enemy... enemies) {
 		for(Enemy e : enemies)

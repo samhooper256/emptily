@@ -6,10 +6,31 @@ import utils.RNG;
 
 class RoomLayoutHelper {
 	
-	private static List<RoomLayout> layouts;
+	private static final List<RoomLayout> layouts;
 	private static final double INTERIOR_CUT = RoomLayout.DEFAULT_BORDER_THICKNESS * 2;
 	
 	static {
+//		layouts = List.of(
+//				RoomLayout.builder()
+//				.setSize(400, 400)
+//				.setRects(
+//						new RectangleLayoutImpl(100, 100, 200, 100),
+//						new RectangleLayoutImpl(80, 240, 30, 10),
+//						new RectangleLayoutImpl(200, 200, 100, 100)
+//				)
+//				.setGaps(leftGap(100, 400), rightGap(100, 400),
+//						topGap(100, 400), bottomGap(100, 400))
+//				.build(),
+//				RoomLayout.builder()
+//				.setSize(400, 400)
+//				.setRects(
+//						new RectangleLayoutImpl(60, 60, 90, 90),
+//						new RectangleLayoutImpl(250, 250, 90, 90)
+//				)
+//				.setGaps(leftGap(100, 400), rightGap(100, 400),
+//						topGap(100, 400), bottomGap(100, 400))
+//				.build()
+//		);
 		layouts = List.of(
 				RoomLayout.builder()
 				.setSize(400, 400)
@@ -18,17 +39,15 @@ class RoomLayoutHelper {
 						new RectangleLayoutImpl(80, 240, 30, 10),
 						new RectangleLayoutImpl(200, 200, 100, 100)
 				)
-				.setGaps(leftGap(100, 400), rightGap(100, 400),
-						topGap(100, 400), bottomGap(100, 400))
+				.setGaps(leftGap(100, 400), rightGap(100, 400), bottomGap(100, 400))
 				.build(),
 				RoomLayout.builder()
-				.setSize(400, 400)
+				.setSize(800, 400)
 				.setRects(
 						new RectangleLayoutImpl(60, 60, 90, 90),
 						new RectangleLayoutImpl(250, 250, 90, 90)
 				)
-				.setGaps(leftGap(100, 400), rightGap(100, 400),
-						topGap(100, 400), bottomGap(100, 400))
+				.setGaps(leftGap(100, 400), rightGap(100, 400), topGap(100, 800), bottomGap(100, 800))
 				.build()
 		);
 	}
