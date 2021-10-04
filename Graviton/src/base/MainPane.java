@@ -18,7 +18,9 @@ import rooms.gaps.HorizontalGap;
 import rooms.gaps.HorizontalGapCollection;
 import rooms.gaps.VerticalGap;
 import rooms.gaps.VerticalGapCollection;
+import rooms.spawns.EnemySpawn;
 
+//MAJOR TODO: make sure player cannot walk through doors! Make sure rooms unlock after killing all enemies!
 public class MainPane extends StackPane implements DelayUpdatable {
 
 	private final Pane content;
@@ -205,8 +207,10 @@ public class MainPane extends StackPane implements DelayUpdatable {
 		
 		RoomInfo oldRoom = currentRoom;
 		currentRoom = getRoomEnclosingPlayer();
-		if(oldRoom == null && currentRoom != null)
+		if(oldRoom == null && currentRoom != null) {
 			lockCurrentRoom();
+			spawnEnemies(currentRoom);
+		}
 		if(oldRoom != null && currentRoom == null)
 			unlock(oldRoom);
 		
@@ -331,6 +335,16 @@ public class MainPane extends StackPane implements DelayUpdatable {
 		if(!playerIntersectsHallway())
 			return getRoomContainingPlayer();
 		return null;
+	}
+	
+	private void spawnEnemies(RoomInfo ri) {
+		RoomLayout l = ri.layout();
+		for(EnemySpawn spawn : l.spawns()) {
+			Enemy e = spawn.get();
+			e.setLayoutX(ri.tlx() + spawn.relX());
+			e.setLayoutY(ri.tly() + spawn.relY());
+			addEnemies(e);
+		}
 	}
 	
 	private void lockCurrentRoom() {

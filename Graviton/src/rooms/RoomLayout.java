@@ -8,6 +8,7 @@ import rooms.gaps.DoorGap;
 import rooms.gaps.DoorGapCollection;
 import rooms.gaps.HorizontalGapCollection;
 import rooms.gaps.VerticalGapCollection;
+import rooms.spawns.EnemySpawn;
 
 public interface RoomLayout {
 	
@@ -112,5 +113,7 @@ public interface RoomLayout {
 	void removeGapsIf(Predicate<? super DoorGap> predicate);
 	
 	RoomLayout copy();
+	
+	Collection<EnemySpawn> spawns();
 	
 }

@@ -1,12 +1,16 @@
 package rooms;
 
+import java.util.*;
+
 import rooms.gaps.DoorGap;
+import rooms.spawns.*;
 
 public final class LayoutBuilder {
 
 	private double width, height;
 	private RectangleLayout[] rects;
 	private DoorGap[] gaps;
+	private List<EnemySpawn> spawns;
 	
 	public LayoutBuilder() {
 		
@@ -38,15 +42,24 @@ public final class LayoutBuilder {
 		return this;
 	}
 	
+	public LayoutBuilder addBasicSpawn(double relX, double relY) {
+		if(spawns == null)
+			spawns = new ArrayList<>();
+		spawns.add(new BasicEnemySpawn(relX, relY));
+		return this;
+	}
+	
 	public RoomLayout build() {
 		if(width <= 0 || height <= 0)
 			throw new IllegalStateException("Cannot build room with non-positive width or height.");
-		if(rects == null)
-			rects = new RectangleLayout[0];
 		if(gaps == null || gaps.length == 0)
 			throw new IllegalStateException("DoorGaps have not been configured properly. "
 					+ "There must be at least one gap.");
-		return new RoomLayoutImpl(width, height, rects, gaps);
+		if(rects == null)
+			rects = new RectangleLayout[0];
+		if(spawns == null)
+			spawns = Collections.emptyList();
+		return new RoomLayoutImpl(width, height, rects, gaps, spawns);
 	}
 	
 }

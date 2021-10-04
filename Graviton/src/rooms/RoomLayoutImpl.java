@@ -5,6 +5,7 @@ import java.util.*;
 import java.util.function.Predicate;
 
 import rooms.gaps.*;
+import rooms.spawns.EnemySpawn;
 
 final class RoomLayoutImpl implements RoomLayout {
 
@@ -14,11 +15,15 @@ final class RoomLayoutImpl implements RoomLayout {
 	private VerticalGapCollection leftGaps, rightGaps;
 	private DoorGapCollection<DoorGap> allGaps;
 	private final RectangleLayout top, bottom, left, right;
+	private final Collection<EnemySpawn> spawns;
 	
-	public RoomLayoutImpl(double width, double height, RectangleLayout[] interiorRects, DoorGap[] gaps) {
+	/** Assumes {@code spawns} is not modified after being passed to this constructor.*/
+	public RoomLayoutImpl(double width, double height, RectangleLayout[] interiorRects, DoorGap[] gaps,
+			Collection<EnemySpawn> spawns) {
 		this.width = width;
 		this.height = height;
 		this.interiorRects = new HashSet<>();
+		this.spawns = spawns;
 		top = RectangleLayout.of(0, 0, width, borderThickness());
 		bottom = RectangleLayout.of(0, height - borderThickness(), width, borderThickness());
 		left = RectangleLayout.of(0, 0, borderThickness(), height);
@@ -120,9 +125,16 @@ final class RoomLayoutImpl implements RoomLayout {
 			removeGap(g);
 	}
 
+	/** {@link #spawns() Spawns} are <em>not</em> copied.*/
 	@Override
 	public RoomLayout copy() {
-		return new RoomLayoutImpl(width, height, interiorRects.toArray(RectangleLayout[]::new), allGaps.toArray());
+		return new RoomLayoutImpl(width, height, interiorRects.toArray(RectangleLayout[]::new), allGaps.toArray(),
+				spawns);
+	}
+	
+	@Override
+	public Collection<EnemySpawn> spawns() {
+		return spawns;
 	}
 	
 }

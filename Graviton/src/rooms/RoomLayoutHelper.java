@@ -36,6 +36,7 @@ class RoomLayoutHelper {
 				RoomLayout.builder()
 				.setSize(400, 400)
 				.setGaps(leftGap(100, 400), rightGap(100, 400), topGap(100, 400), bottomGap(100, 400))
+				.addBasicSpawn(190, 190)
 				.build()
 		);
 	}

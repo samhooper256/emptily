@@ -6,4 +6,8 @@ module relearn {
 	
 	exports base;
 	exports rooms;
+	exports rooms.gaps;
+	exports rooms.spawns;
+	exports hallways;
+	
 }
