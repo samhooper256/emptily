@@ -1,5 +1,7 @@
 package rooms;
 
+import rooms.gaps.DoorGap;
+
 public final class LayoutBuilder {
 
 	private double width, height;

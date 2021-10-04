@@ -1,6 +1,8 @@
-package rooms;
+package rooms.gaps;
 
 import javafx.geometry.Side;
+import rooms.RoomInfo;
+import rooms.RoomLayout;
 
 public sealed interface DoorGap permits HorizontalGap, VerticalGap {
 	

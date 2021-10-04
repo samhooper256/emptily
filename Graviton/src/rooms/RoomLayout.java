@@ -4,6 +4,10 @@ import java.util.*;
 import java.util.function.Predicate;
 
 import javafx.geometry.*;
+import rooms.gaps.DoorGap;
+import rooms.gaps.DoorGapCollection;
+import rooms.gaps.HorizontalGapCollection;
+import rooms.gaps.VerticalGapCollection;
 
 public interface RoomLayout {
 	

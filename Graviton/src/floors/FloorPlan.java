@@ -1,6 +1,9 @@
-package rooms;
+package floors;
 
 import java.util.*;
+
+import hallways.HallwayInfo;
+import rooms.RoomInfo;
 
 public interface FloorPlan {
 	

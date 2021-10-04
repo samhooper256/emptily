@@ -4,6 +4,8 @@ import java.awt.geom.Line2D;
 import java.util.*;
 import java.util.function.Predicate;
 
+import rooms.gaps.*;
+
 final class RoomLayoutImpl implements RoomLayout {
 
 	private final double width, height;
@@ -40,10 +42,10 @@ final class RoomLayoutImpl implements RoomLayout {
 				case RIGHT -> rgaps.add(gap.asVertical());
 			}
 		}
-		topGaps = new HorizontalGapCollectionImpl(tgaps);
-		bottomGaps = new HorizontalGapCollectionImpl(bgaps);
-		leftGaps = new VerticalGapCollectionImpl(lgaps);
-		rightGaps = new VerticalGapCollectionImpl(rgaps);
+		topGaps = HorizontalGapCollection.from(tgaps);
+		bottomGaps = HorizontalGapCollection.from(bgaps);
+		leftGaps = VerticalGapCollection.from(lgaps);
+		rightGaps = VerticalGapCollection.from(rgaps);
 		allGaps = DoorGapCollection.fromArbitraryGaps(Arrays.asList(gapsArr));
 	}
 	

@@ -2,13 +2,22 @@ package base;
 
 import java.util.*;
 
+import floors.FloorPlan;
+import floors.FloorPlanBuilder;
+import hallways.HallwayInfo;
+import hallways.HallwayLayout;
 import javafx.collections.ObservableList;
 import javafx.geometry.*;
 import javafx.scene.*;
 import javafx.scene.input.KeyCode;
 import javafx.scene.layout.*;
+import javafx.scene.paint.Color;
 import javafx.scene.shape.*;
 import rooms.*;
+import rooms.gaps.HorizontalGap;
+import rooms.gaps.HorizontalGapCollection;
+import rooms.gaps.VerticalGap;
+import rooms.gaps.VerticalGapCollection;
 
 public class MainPane extends StackPane implements DelayUpdatable {
 
@@ -17,8 +26,10 @@ public class MainPane extends StackPane implements DelayUpdatable {
 	private final Collection<Platform> platforms;
 	private final Set<Enemy> enemies;
 	private final Set<Node> removeRequests;
+	private final Map<RoomInfo, Collection<Door>> doorMap;
 	
-	private RoomInfo currentInfo; //TODO better - change it when you change rooms.
+	/** The room that fully encloses the player, or {@code null} if there is no such room. */
+	private RoomInfo currentRoom;
 	private FloorPlan floorPlan;
 	
 	MainPane() {
@@ -29,8 +40,8 @@ public class MainPane extends StackPane implements DelayUpdatable {
 		platforms = new ArrayList<>();
 		enemies = new HashSet<>();
 		
-		floorPlan = new FloorPlanBuilder(RoomLayout.all(), 6, 80).build();
-		currentInfo = floorPlan.startingRoom();
+		floorPlan = new FloorPlanBuilder(RoomLayout.all(), 25, 80).build();
+		currentRoom = floorPlan.startingRoom();
 		
 		for(RoomInfo ri : floorPlan.rooms())
 			displayRoom(ri);
@@ -38,20 +49,24 @@ public class MainPane extends StackPane implements DelayUpdatable {
 		for(HallwayInfo hi : floorPlan.hallways())
 			displayHallway(hi);
 		
+		doorMap = new HashMap<>();
+		initDoors();
+		
 		removeRequests = new HashSet<>();
 		
 		content.getChildren().addAll(player);
-		
-		BasicEnemy e1 = new BasicEnemy(), e2 = new BasicEnemy(), e3 = new BasicEnemy();
-		e1.setLocation(20, 70);
-		e2.setLocation(170, 210);
-		e3.setLocation(220, 70);
-		addEnemies(e1, e2, e3);
 		
 		player.setLayoutX(50);
 		player.setLayoutY(300);
 		
 		getChildren().addAll(content);
+		
+		for(RoomInfo ri : floorPlan.rooms()) {
+			double t = ri.layout().borderThickness();
+			Rectangle r = new Rectangle(ri.tlx() + t, ri.tly() + t, ri.layout().interiorWidth(), ri.layout().interiorHeight());
+			r.setFill(Color.rgb(0x87, 0xB5, 0xFF, 0.5));
+			content.getChildren().add(r);
+		}
 		
 	}
 	
@@ -101,13 +116,51 @@ public class MainPane extends StackPane implements DelayUpdatable {
 		double tlx = hi.tlx(), tly = hi.tly();
 		if(hl.isVertical()) {
 			addPlatform(new Platform(tlx, tly, hl.wallWidth(), hl.length()));
-			addPlatform(new Platform(tlx + hl.wallWidth() + hl.width(), tly, hl.wallWidth(), hl.length()));
+			addPlatform(new Platform(tlx + hl.wallWidth() + hl.girth(), tly, hl.wallWidth(), hl.length()));
 		}
 		else {
 			addPlatform(new Platform(tlx, tly, hl.length(), hl.wallWidth()));
-			addPlatform(new Platform(tlx, tly + hl.wallWidth() + hl.width(), hl.length(), hl.wallWidth()));
+			addPlatform(new Platform(tlx, tly + hl.wallWidth() + hl.girth(), hl.length(), hl.wallWidth()));
 		}
 	}	
+	
+	private void initDoors() {
+		for(RoomInfo ri : rooms()) {
+			Collection<Door> doors = new ArrayList<>();
+			for(HorizontalGap dg : ri.layout().topGaps())
+				doors.add(createTopDoor(ri, dg));
+			for(HorizontalGap dg : ri.layout().bottomGaps())
+				doors.add(createBottomDoor(ri, dg));
+			for(VerticalGap dg : ri.layout().leftGaps())
+				doors.add(createLeftDoor(ri, dg));
+			for(VerticalGap dg : ri.layout().rightGaps())
+				doors.add(createRightDoor(ri, dg));
+			content.getChildren().addAll(doors);
+			doorMap.put(ri, doors);
+		}
+	}
+	
+	private Door createTopDoor(RoomInfo ri, HorizontalGap dg) {
+		return new Door(ri.tlx() + ri.layout().borderThickness() + dg.leftDist(), ri.tly(), dg.sizeIn(ri),
+				ri.layout().borderThickness());
+	}
+	
+	private Door createBottomDoor(RoomInfo ri, HorizontalGap dg) {
+		return new Door(ri.tlx() + ri.layout().borderThickness() + dg.leftDist(), ri.tly() +
+				ri.layout().borderThickness() + ri.layout().interiorHeight(), dg.sizeIn(ri),
+				ri.layout().borderThickness());
+	}
+	
+	private Door createLeftDoor(RoomInfo ri, VerticalGap dg) {
+		return new Door(ri.tlx(), ri.tly() + ri.layout().borderThickness() + dg.topDist(),
+				ri.layout().borderThickness(), dg.sizeIn(ri));
+	}
+	
+	private Door createRightDoor(RoomInfo ri, VerticalGap dg) {
+		return new Door(ri.tlx() + ri.layout().borderThickness() + ri.layout().interiorWidth(),
+				ri.tly() + ri.layout().borderThickness() + dg.topDist(),
+				ri.layout().borderThickness(), dg.sizeIn(ri));
+	}
 	
 	private void addEnemies(Enemy... enemies) {
 		for(Enemy e : enemies)
@@ -149,6 +202,14 @@ public class MainPane extends StackPane implements DelayUpdatable {
 	@Override
 	public void update(long nsSinceLastFrame) {
 		player.update(nsSinceLastFrame);
+		
+		RoomInfo oldRoom = currentRoom;
+		currentRoom = getRoomEnclosingPlayer();
+		if(oldRoom == null && currentRoom != null)
+			lockCurrentRoom();
+		if(oldRoom != null && currentRoom == null)
+			unlock(oldRoom);
+		
 		for(Node n : content.getChildren())
 			if(n != player && n instanceof DelayUpdatable du)
 				du.update(nsSinceLastFrame);
@@ -202,6 +263,14 @@ public class MainPane extends StackPane implements DelayUpdatable {
 		return null;
 	}
 	
+	public boolean intersectsPlayer(HallwayInfo hi) {
+		return hi.bounds().intersects(player.getBoundsInParent());
+	}
+	
+	public boolean interiorContainsPlayer(RoomInfo ri) {
+		return ri.interiorBounds().contains(player.getBoundsInParent());
+	}
+	
 	public boolean intersectsPlayer(Enemy enemy) {
 		Bounds enemyBounds = enemy.getBoundsInParent();
 		return enemyBounds.intersects(player.getBoundsInParent());
@@ -229,8 +298,65 @@ public class MainPane extends StackPane implements DelayUpdatable {
 		return true;
 	}
 	
+	public boolean playerIntersectsHallway() {
+		return getHallwayPlayerIntersects() != null;
+	}
+	
+	/** Returns the {@link HallwayInfo} of the hallway the player currently intersects, or {@code null} if the player
+	 * does not intersect any hallway. */
+	public HallwayInfo getHallwayPlayerIntersects() {
+		for(HallwayInfo hi : hallways())
+			if(intersectsPlayer(hi))
+				return hi;
+		return null;
+	}
+	
+	/** Returns the {@link RoomInfo} of the room whose {@link RoomInfo#interiorBounds() interior} contains the player,
+	 * or {@code null} if no room contains the player. */
+	public RoomInfo getRoomContainingPlayer() {
+		for(RoomInfo ri : rooms())
+			if(interiorContainsPlayer(ri))
+				return ri;
+		return null;
+	}
+
+	/** Returns the {@link RoomInfo} of the room that <em>completely encloses</em> the player. For a room to completely
+	 * enclose the player, both of the following conditions must be true:
+	 * <ol>
+	 * <li>the player does not {@link #playerIntersectsHallway() intersect a hallway}</li>
+	 * <li>The room's interior {@link #getRoomContainingPlayer() contains} the player.</li>
+	 * </ol>
+	 * Returns {@code null} if no room completely encloses the player. */
+	public RoomInfo getRoomEnclosingPlayer() {
+		if(!playerIntersectsHallway())
+			return getRoomContainingPlayer();
+		return null;
+	}
+	
+	private void lockCurrentRoom() {
+		for(Door d : doorMap.get(currentRoom))
+			d.appear();
+	}
+	
+	/** Assumes the given room is locked. */
+	public void unlock(RoomInfo ri) {
+		
+	}
+	
 	public RoomInfo roomInfo() {
-		return currentInfo;
+		return currentRoom;
+	}
+	
+	public FloorPlan floorPlan() {
+		return floorPlan;
+	}
+	
+	private Collection<HallwayInfo> hallways() {
+		return floorPlan().hallways();
+	}
+	
+	private Collection<RoomInfo> rooms() {
+		return floorPlan().rooms();
 	}
 	
 }

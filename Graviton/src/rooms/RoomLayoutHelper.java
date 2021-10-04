@@ -2,6 +2,7 @@ package rooms;
 
 import java.util.*;
 
+import rooms.gaps.DoorGap;
 import utils.RNG;
 
 class RoomLayoutHelper {
@@ -34,20 +35,7 @@ class RoomLayoutHelper {
 		layouts = List.of(
 				RoomLayout.builder()
 				.setSize(400, 400)
-				.setRects(
-						new RectangleLayoutImpl(100, 100, 200, 100),
-						new RectangleLayoutImpl(80, 240, 30, 10),
-						new RectangleLayoutImpl(200, 200, 100, 100)
-				)
-				.setGaps(leftGap(100, 400), rightGap(100, 400), bottomGap(100, 400))
-				.build(),
-				RoomLayout.builder()
-				.setSize(800, 400)
-				.setRects(
-						new RectangleLayoutImpl(60, 60, 90, 90),
-						new RectangleLayoutImpl(250, 250, 90, 90)
-				)
-				.setGaps(leftGap(100, 400), rightGap(100, 400), topGap(100, 800), bottomGap(100, 800))
+				.setGaps(leftGap(100, 400), rightGap(100, 400), topGap(100, 400), bottomGap(100, 400))
 				.build()
 		);
 	}

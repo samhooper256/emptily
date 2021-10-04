@@ -1,6 +1,7 @@
-package rooms;
+package rooms.gaps;
 
 import javafx.geometry.Side;
+import rooms.RoomLayout;
 
 /** {@link #side()} is {@link Side#TOP TOP} or {@link Side#BOTTOM BOTTOM}.*/
 public sealed interface HorizontalGap extends DoorGap permits HorizontalGapImpl {

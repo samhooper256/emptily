@@ -1,4 +1,4 @@
-package rooms;
+package rooms.gaps;
 
 import java.util.List;
 

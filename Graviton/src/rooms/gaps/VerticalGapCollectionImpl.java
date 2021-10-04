@@ -1,4 +1,4 @@
-package rooms;
+package rooms.gaps;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -7,7 +7,9 @@ import java.util.Comparator;
 import java.util.Iterator;
 import java.util.List;
 
-public final class VerticalGapCollectionImpl implements VerticalGapCollection {
+import rooms.WallDirection;
+
+final class VerticalGapCollectionImpl implements VerticalGapCollection {
 
 	private final Collection<VerticalGap> baseGaps;
 	private final List<VerticalGap> sortedTB, sortedBT;

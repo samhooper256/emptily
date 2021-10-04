@@ -1,9 +1,16 @@
-package rooms;
+package floors;
 
 import java.util.*;
 import java.util.stream.Collectors;
 
+import hallways.HallwayInfo;
 import javafx.geometry.Side;
+import rooms.RoomInfo;
+import rooms.RoomLayout;
+import rooms.gaps.DoorGap;
+import rooms.gaps.DoorGapCollection;
+import rooms.gaps.HorizontalGap;
+import rooms.gaps.VerticalGap;
 import utils.*;
 
 public final class FloorPlanBuilder {

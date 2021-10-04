@@ -1,6 +1,7 @@
-package rooms;
+package rooms.gaps;
 
 import javafx.geometry.Side;
+import rooms.RoomLayout;
 
 /** {@link #side()} is {@link Side#LEFT LEFT} or {@link Side#RIGHT RIGHT}.*/
 public sealed interface VerticalGap extends DoorGap permits VerticalGapImpl {

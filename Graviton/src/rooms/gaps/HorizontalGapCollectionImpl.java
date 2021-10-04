@@ -1,6 +1,8 @@
-package rooms;
+package rooms.gaps;
 
 import java.util.*;
+
+import rooms.WallDirection;
 
 final class HorizontalGapCollectionImpl implements HorizontalGapCollection {
 
