@@ -55,14 +55,14 @@ public final class FloorPlanBuilder {
 		usedGaps.put(startInfo, new HashSet<>());
 		for(int i = 0; i < desiredRoomCount - 1; i++)
 			addRoom();
-		System.out.printf("usedGaps: %s%n", usedGaps);
+//		System.out.printf("usedGaps: %s%n", usedGaps);
 		for(Map.Entry<RoomInfo, Set<DoorGap>> e : usedGaps.entrySet()) {
-			System.out.printf("\te=%s%n", e);
+//			System.out.printf("\te=%s%n", e);
 			Set<DoorGap> used = e.getValue();
 			RoomInfo r = e.getKey();
-			System.out.printf("\troom gaps: %s%n", r.layout().gaps());
+//			System.out.printf("\troom gaps: %s%n", r.layout().gaps());
 			r.layout().removeGapsIf(g -> !used.contains(g));
-			System.out.printf("\troom gaps remaining: %s%n%n", r.layout().gaps());
+//			System.out.printf("\troom gaps remaining: %s%n%n", r.layout().gaps());
 		}
 		
 		return FloorPlan.of(startInfo, usedGaps.keySet(), hallways);
@@ -72,7 +72,6 @@ public final class FloorPlanBuilder {
 //		System.out.printf("[enter] addRoom(), allRooms: %s%n", formattedInfos(usedGaps.keySet()));
 		while(!q.isEmpty()) {
 //			System.out.printf("\tenter while%n");
-			printq();
 			RoomInfo i = q.peek();
 //			System.out.printf("\ti=(%.1f, %.1f)%n", i.tlx() / 480, i.tly() / 480);
 			RoomLayout ilayout = i.layout();
@@ -135,10 +134,6 @@ public final class FloorPlanBuilder {
 			}
 			q.remove();
 		}
-	}
-
-	private void printq() {
-		System.out.printf("\tq=%s%n", formattedInfos(q));
 	}
 	
 	private String formattedInfos(Collection<? extends RoomInfo> q) {

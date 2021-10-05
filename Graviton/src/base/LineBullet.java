@@ -41,7 +41,7 @@ public class LineBullet extends Circle implements DelayUpdatable {
 		double sec = nsSinceLastFrame / 1e9;
 		setLayoutX(x() + sec * xvel);
 		setLayoutY(y() + sec * yvel);
-		if(Main.pane().intersectsAnyPlatforms(this))
+		if(Main.pane().intersectsAnyPlatformsOrDoors(this))
 			Main.pane().requestRemove(this);
 		else {
 			HittableEnemy enemy = Main.pane().intersectsHittableEnemy(this);

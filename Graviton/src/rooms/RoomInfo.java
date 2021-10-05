@@ -28,7 +28,7 @@ public interface RoomInfo {
 	default BoundingBox interiorBounds() {
 		RoomLayout l = layout();
 		return new BoundingBox(tlx() + l.borderThickness(), tly() + l.borderThickness(),
-				l.interiorWidth(), l.exteriorHeight());
+				l.interiorWidth(), l.interiorHeight());
 	}
 	
 }

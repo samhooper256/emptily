@@ -11,8 +11,16 @@ public class Door extends Rectangle {
 		setVisible(false);
 	}
 	
-	public void appear() {
+	public void close() {
 		setVisible(true);
+	}
+	
+	public boolean isClosed() {
+		return isVisible();
+	}
+	
+	public void open() {
+		setVisible(false);
 	}
 	
 }

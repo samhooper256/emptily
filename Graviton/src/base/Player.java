@@ -4,6 +4,7 @@ import java.util.function.Consumer;
 
 import fxutils.Backgrounds;
 import javafx.geometry.*;
+import javafx.scene.Node;
 import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
 
@@ -58,30 +59,24 @@ public class Player extends StackPane implements DelayUpdatable {
 		boolean backtrackedX = false, backtrackedY = false;
 		//X:
 		setLayoutX(x);
-		for(Platform p : Main.scene().pane().platforms()) {
-			if(backtrackedX)
-				break;
-			if(intersects(p)) {
-				backtrackedX = true;
-				x = findX(oldX, x, p);
-				setLayoutX(x);
-				xvel = 0;
-			}
+		Node p = Main.pane().getPlatformOrDoorIntersecting(this);
+		if(p != null) {
+			backtrackedX = true;
+			x = findX(oldX, x, p);
+			setLayoutX(x);
+			xvel = 0;
 		}
 		if(!backtrackedX)
 			xvel += xaccel * sec;
 		
 		//Y:
 		setLayoutY(y);
-		for(Platform p : Main.scene().pane().platforms()) {
-			if(backtrackedY)
-				break;
-			if(intersects(p)) {
-				backtrackedY = true;
-				y = findY(oldY, y, p);
-				setLayoutY(y);
-				yvel = 0;
-			}
+		p = Main.pane().getPlatformOrDoorIntersecting(this);
+		if(p != null) {
+			backtrackedY = true;
+			y = findY(oldY, y, p);
+			setLayoutY(y);
+			yvel = 0;
 		}
 		if(!backtrackedY)
 			yvel += yaccel * sec;
@@ -93,7 +88,7 @@ public class Player extends StackPane implements DelayUpdatable {
 		return invincibilityTimer == 0;
 	}
 	
-	private boolean intersects(Platform p) {
+	private boolean intersects(Node p) {
 		return p.getBoundsInParent().intersects(getBoundsInParent());
 	}
 	
@@ -126,16 +121,16 @@ public class Player extends StackPane implements DelayUpdatable {
 		return new Point2D(x() + width() / 2, y() + height() / 2);
 	}
 	
-	private double findX(double safe, double collide, Platform p) {
+	private double findX(double safe, double collide, Node p) {
 		return findCoord(safe, collide, p, this::setLayoutX);
 	}
 	
-	private double findY(double safe, double collide, Platform p) {
+	private double findY(double safe, double collide, Node p) {
 		return findCoord(safe, collide, p, this::setLayoutY);
 	}
 
 	/** assumes current position is collideY*/
-	private double findCoord(double safe, double collide, Platform p, Consumer<Double> setter) {
+	private double findCoord(double safe, double collide, Node p, Consumer<Double> setter) {
 		while(Math.abs(safe - collide) > COLLIDE_FLUSH) {
 			double mid = Maths.mean(safe, collide);
 			setter.accept(mid);

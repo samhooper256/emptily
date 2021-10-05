@@ -119,11 +119,11 @@ public class BasicEnemy extends Rectangle implements HittableEnemy, DelayUpdatab
 		double oldX = x(), oldY = y();
 		boolean canX = true, canY = true;
 		setLayoutX(oldX + xvel * sec);
-		if(Main.pane().intersectsAnyPlatforms(this))
+		if(Main.pane().intersectsAnyPlatformsOrDoors(this))
 			canX = false;
 		setLayoutX(oldX);
 		setLayoutY(y() + yvel * sec);
-		if(Main.pane().intersectsAnyPlatforms(this))
+		if(Main.pane().intersectsAnyPlatformsOrDoors(this))
 			canY = false;
 		setLayoutY(oldY);
 		if(!canX && !canY) {

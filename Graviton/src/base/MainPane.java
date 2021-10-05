@@ -20,7 +20,6 @@ import rooms.gaps.VerticalGap;
 import rooms.gaps.VerticalGapCollection;
 import rooms.spawns.EnemySpawn;
 
-//MAJOR TODO: make sure player cannot walk through doors! Make sure rooms unlock after killing all enemies!
 public class MainPane extends StackPane implements DelayUpdatable {
 
 	private final Pane content;
@@ -28,11 +27,13 @@ public class MainPane extends StackPane implements DelayUpdatable {
 	private final Collection<Platform> platforms;
 	private final Set<Enemy> enemies;
 	private final Set<Node> removeRequests;
+	private final Set<RoomInfo> clearedRooms;
 	private final Map<RoomInfo, Collection<Door>> doorMap;
 	
 	/** The room that fully encloses the player, or {@code null} if there is no such room. */
 	private RoomInfo currentRoom;
 	private FloorPlan floorPlan;
+	private boolean isFighting;
 	
 	MainPane() {
 		
@@ -42,8 +43,12 @@ public class MainPane extends StackPane implements DelayUpdatable {
 		platforms = new ArrayList<>();
 		enemies = new HashSet<>();
 		
-		floorPlan = new FloorPlanBuilder(RoomLayout.all(), 25, 80).build();
+		floorPlan = new FloorPlanBuilder(RoomLayout.all(), 23, 80).build();
 		currentRoom = floorPlan.startingRoom();
+		clearedRooms = new HashSet<>();
+		clearedRooms.add(currentRoom);
+		
+		isFighting = false;
 		
 		for(RoomInfo ri : floorPlan.rooms())
 			displayRoom(ri);
@@ -174,10 +179,6 @@ public class MainPane extends StackPane implements DelayUpdatable {
 		enemies.add(e);
 	}
 	
-	private void removeAllPlatforms() {
-		content.getChildren().removeAll(platforms);
-	}
-	
 	private void addPlatform(Platform platform) {
 		content.getChildren().add(platform);
 		this.platforms.add(platform);
@@ -208,11 +209,18 @@ public class MainPane extends StackPane implements DelayUpdatable {
 		RoomInfo oldRoom = currentRoom;
 		currentRoom = getRoomEnclosingPlayer();
 		if(oldRoom == null && currentRoom != null) {
-			lockCurrentRoom();
-			spawnEnemies(currentRoom);
+			if(!isCleared(currentRoom)) {
+				startFighting();
+			}
 		}
-		if(oldRoom != null && currentRoom == null)
+		else if(currentRoom != null) {
+			if(isFighting && !enemiesExist())
+				stopFighting(currentRoom);
+		}
+		else if(oldRoom != null && currentRoom == null) {
 			unlock(oldRoom);
+		}
+		
 		
 		for(Node n : content.getChildren())
 			if(n != player && n instanceof DelayUpdatable du)
@@ -241,12 +249,22 @@ public class MainPane extends StackPane implements DelayUpdatable {
 	}
 	
 	/** Assumes {@code node} is an immediate child of {@link #content()}. */
-	public boolean intersectsAnyPlatforms(Node node) {
+	public boolean intersectsAnyPlatformsOrDoors(Node node) {
+		return getPlatformOrDoorIntersecting(node) != null;
+	}
+	
+	/** Assumes {@code node} is an immediate child of {@link #content()}. */
+	public Node getPlatformOrDoorIntersecting(Node node) {
 		Bounds bounds = node.getBoundsInParent();
 		for(Platform p : platforms)
 			if(bounds.intersects(p.getBoundsInParent()))
-				return true;
-		return false;
+				return p;
+		for(Map.Entry<RoomInfo, Collection<Door>> e : doorMap.entrySet()) {
+			for(Door d : e.getValue())
+				if(d.isClosed() && bounds.intersects(d.getBoundsInParent()))
+					return d;
+		}
+		return null;
 	}
 	
 	/** Assumes {@code node} is an immediate child of {@link #content()}.
@@ -337,6 +355,7 @@ public class MainPane extends StackPane implements DelayUpdatable {
 		return null;
 	}
 	
+	
 	private void spawnEnemies(RoomInfo ri) {
 		RoomLayout l = ri.layout();
 		for(EnemySpawn spawn : l.spawns()) {
@@ -349,12 +368,28 @@ public class MainPane extends StackPane implements DelayUpdatable {
 	
 	private void lockCurrentRoom() {
 		for(Door d : doorMap.get(currentRoom))
-			d.appear();
+			d.close();
 	}
 	
-	/** Assumes the given room is locked. */
+	private void startFighting() {
+		isFighting = true;
+		lockCurrentRoom();
+		spawnEnemies(currentRoom);
+		Main.scene().startedFighting(currentRoom);
+	}
+
+	/** Assumes the given room is locked. Marks the given room as {@link #clearedRooms cleared}. */
+	public void stopFighting(RoomInfo ri) {
+		isFighting = false;
+		clearedRooms.add(ri);
+		Main.scene().stoppedFighting();
+		unlock(ri);
+	}
+	
+	/** Assumes the given room is locked. Marks the given room as {@link #clearedRooms cleared}. */
 	public void unlock(RoomInfo ri) {
-		
+		for(Door d : doorMap.get(ri))
+			d.open();
 	}
 	
 	public RoomInfo roomInfo() {
@@ -371,6 +406,14 @@ public class MainPane extends StackPane implements DelayUpdatable {
 	
 	private Collection<RoomInfo> rooms() {
 		return floorPlan().rooms();
+	}
+	
+	public boolean isCleared(RoomInfo ri) {
+		return clearedRooms.contains(ri);
+	}
+	
+	public boolean enemiesExist() {
+		return enemies.size() != 0;
 	}
 	
 }
