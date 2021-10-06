@@ -11,14 +11,13 @@ import rooms.RoomInfo;
 
 public class MainScene extends SubScene implements DelayUpdatable {
 
-	private static final Duration TO_PLAYER_DURATION = Duration.millis(1000);
+	private static final Duration TO_PLAYER_DURATION = Duration.millis(1000), TO_ROOM_DURATION = Duration.millis(1000);
 	
 	private final class ToPlayerAnimation extends Transition {
 
 		private double x, y;
 		
 		public ToPlayerAnimation() {
-			super();
 			setOnFinished(eh -> {
 				camera.translateXProperty().bind(cameraX);
 				camera.translateYProperty().bind(cameraY);
@@ -32,7 +31,7 @@ public class MainScene extends SubScene implements DelayUpdatable {
 			camera.setTranslateY(y + frac * (cameraY.get() - y));
 		}
 		
-		public void startFrom(double x, double y) {
+		void startFrom(double x, double y) {
 			camera.translateXProperty().unbind();
 			camera.translateYProperty().unbind();
 //			camera.setTranslateX(x);
@@ -44,10 +43,39 @@ public class MainScene extends SubScene implements DelayUpdatable {
 		
 	}
 	
+	private final class ToRoomAnimation extends Transition {
+		
+		private double startX, startY, destX, destY;
+		
+		ToRoomAnimation() {
+			setCycleDuration(TO_ROOM_DURATION);
+		}
+		
+		@Override
+		protected void interpolate(double frac) {
+			camera.setTranslateX(startX + frac * (destX - getWidth() / 2 - startX));
+			camera.setTranslateY(startY + frac * (destY - getHeight() / 2 - startY));
+		}
+		
+		void goTo(RoomInfo ri) {
+			goTo(cameraX.get(), cameraY.get(),
+					ri.tlx() + ri.layout().exteriorWidth() / 2, ri.tly() + ri.layout().exteriorHeight() / 2);
+		}
+		
+		void goTo(double startX, double startY, double destX, double destY) {
+			this.startX = startX;
+			this.startY = startY;
+			this.destX = destX;
+			this.destY = destY;
+			playFromStart();
+		}
+		
+	}
 	private final MainPane root;
 	private final PerspectiveCamera camera;
 	private final DoubleBinding cameraX, cameraY;
 	private final ToPlayerAnimation toPlayer;
+	private final ToRoomAnimation toRoom;
 	
 	public MainScene() {
 		this(new MainPane(), 0, 0);
@@ -61,6 +89,7 @@ public class MainScene extends SubScene implements DelayUpdatable {
 		setOnScroll(this::scrollEvent);
 		camera = new PerspectiveCamera();
 		toPlayer = new ToPlayerAnimation();
+		toRoom = new ToRoomAnimation();
 		setCamera(camera);
 		cameraX = pane().player().layoutXProperty().subtract(widthProperty().divide(2));
 		cameraY = pane().player().layoutYProperty().subtract(heightProperty().divide(2));
@@ -85,7 +114,8 @@ public class MainScene extends SubScene implements DelayUpdatable {
 	private void mouseEvent(MouseEvent me) {
 		Point2D coords = root.sceneToLocal(me.getSceneX(), me.getSceneY());
 		if(me.getButton() == MouseButton.PRIMARY)
-			pane().leftClicked(new Point2D(coords.getX() + camera.getTranslateX(), coords.getY() + camera.getTranslateY()));
+			pane().leftClicked(new Point2D(coords.getX() + camera.getTranslateX(),
+					coords.getY() + camera.getTranslateY()));
 	}
 	
 	private void scrollEvent(ScrollEvent se) {
@@ -104,10 +134,12 @@ public class MainScene extends SubScene implements DelayUpdatable {
 	void startedFighting(RoomInfo ri) {
 		camera.translateXProperty().unbind();
 		camera.translateYProperty().unbind();
+		toPlayer.stop();
+		toRoom.goTo(ri);
 	}
 	
 	void stoppedFighting() {
-		System.out.printf("stopped fighting%n");
+		toRoom.stop();
 		toPlayer.startFrom(camera.getTranslateX(), camera.getTranslateY());
 	}
 	
