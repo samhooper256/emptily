@@ -1,6 +1,5 @@
 package base;
 
-
 import javafx.animation.Transition;
 import javafx.beans.binding.DoubleBinding;
 import javafx.geometry.*;
@@ -19,7 +18,7 @@ public class MainScene extends SubScene implements DelayUpdatable {
 		
 		public ToPlayerAnimation() {
 			setOnFinished(eh -> {
-				camera.translateXProperty().bind(cameraX);
+				camera.translateXProperty().bind(cameraX); 	
 				camera.translateYProperty().bind(cameraY);
 			});
 			setCycleDuration(TO_PLAYER_DURATION);
@@ -34,8 +33,6 @@ public class MainScene extends SubScene implements DelayUpdatable {
 		void startFrom(double x, double y) {
 			camera.translateXProperty().unbind();
 			camera.translateYProperty().unbind();
-//			camera.setTranslateX(x);
-//			camera.setTranslateY(y);
 			this.x = x;
 			this.y = y;
 			playFromStart();

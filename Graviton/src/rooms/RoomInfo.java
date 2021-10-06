@@ -31,4 +31,8 @@ public interface RoomInfo {
 				l.interiorWidth(), l.interiorHeight());
 	}
 	
+	/** Two {@link RoomInfo} objects are equal iff they have the same {@link #tlx()} and {@link #tly()}. */
+	@Override
+	boolean equals(Object obj);
+	
 }

@@ -17,5 +17,15 @@ public record RoomInfoImpl(RoomLayout layout, double tlx, double tly,
 		vmap().put(cornerDist, graph);
 		return graph;
 	}
+
+	@Override
+	public boolean equals(Object obj) {
+		return obj instanceof RoomInfo o && tlx() == o.tlx() && tly() == o.tly();
+	}
+
+	@Override
+	public int hashCode() {
+		return Arrays.hashCode(new double[] {tlx(), tly()});
+	}
 	
 }

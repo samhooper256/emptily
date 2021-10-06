@@ -43,7 +43,7 @@ public class MainPane extends StackPane implements DelayUpdatable {
 		platforms = new ArrayList<>();
 		enemies = new HashSet<>();
 		
-		floorPlan = new FloorPlanBuilder(RoomLayout.all(), 23, 80).build();
+		floorPlan = new FloorPlanBuilder(RoomLayout.all(), 3, 80).build();
 		currentRoom = floorPlan.startingRoom();
 		clearedRooms = new HashSet<>();
 		clearedRooms.add(currentRoom);
@@ -75,6 +75,7 @@ public class MainPane extends StackPane implements DelayUpdatable {
 			content.getChildren().add(r);
 		}
 		
+		System.out.printf("rooms=%s%n", rooms());
 	}
 	
 	public void displayRoom(RoomInfo info) {
@@ -388,6 +389,7 @@ public class MainPane extends StackPane implements DelayUpdatable {
 	
 	/** Assumes the given room is locked. Marks the given room as {@link #clearedRooms cleared}. */
 	public void unlock(RoomInfo ri) {
+		System.out.printf("unlocking %s%n", ri);
 		for(Door d : doorMap.get(ri))
 			d.open();
 	}
