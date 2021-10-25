@@ -20,14 +20,6 @@ public interface RoomLayout {
 		return rl.copy();
 	}
 	
-	static List<RoomLayout> all() {
-		return RoomLayoutHelper.all();
-	}
-	
-	static RoomLayout random() {
-		return RoomLayoutHelper.random();
-	}
-	
 	static LayoutBuilder builder() {
 		return new LayoutBuilder();
 	}

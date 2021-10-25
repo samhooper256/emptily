@@ -12,7 +12,6 @@ public class VisibilityGraph {
 	private final Map<Point2D, Set<Point2D>> adj;
 	
 	private VisibilityGraph(RoomLayout layout, Map<Point2D, Set<Point2D>> adj) {
-		System.out.println("Graph created");
 		this.layout = layout;
 		this.adj = adj;
 	}

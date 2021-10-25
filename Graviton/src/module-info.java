@@ -5,9 +5,13 @@ module relearn {
 	requires transitive java.desktop;
 	
 	exports base;
+	exports base.game;
+	exports base.game.content;
+	exports enemies;
 	exports rooms;
 	exports rooms.gaps;
 	exports rooms.spawns;
 	exports hallways;
+	exports floors;
 	
 }

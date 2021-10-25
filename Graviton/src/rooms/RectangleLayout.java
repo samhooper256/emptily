@@ -33,7 +33,6 @@ public interface RectangleLayout {
 	
 	boolean lineIntersects(Line2D.Double line);
 	
-	
 	default double ulx() {
 		return x();
 	}

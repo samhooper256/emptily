@@ -1,7 +1,7 @@
 package rooms.spawns;
 
-import base.BasicEnemy;
-import base.Enemy;
+import enemies.BasicEnemy;
+import enemies.Enemy;
 
 public record BasicEnemySpawn(double relX, double relY) implements EnemySpawn {
 

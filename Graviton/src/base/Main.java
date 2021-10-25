@@ -3,6 +3,8 @@ package base;
 import java.io.InputStream;
 import java.util.Optional;
 
+import base.game.*;
+import base.game.content.MainContent;
 import fxutils.Images;
 import javafx.application.*;
 import javafx.scene.image.Image;
@@ -22,6 +24,7 @@ public class Main extends Application {
 	
 	public static void main(String[] args) {
 		launch(args);
+		
 	}
 
 	@Override
@@ -29,10 +32,10 @@ public class Main extends Application {
 		stage = primaryStage;
 		outerScene = new OuterScene();
 		stage.setScene(outerScene);
-		
 		Timer timer = new Timer();
 		timer.start();
 		
+		stage.setMaximized(true);
 		stage.show();
 	}
 	
@@ -57,6 +60,10 @@ public class Main extends Application {
 	
 	public static MainPane pane() {
 		return scene().pane();
+	}
+	
+	public static MainContent content() {
+		return pane().content();
 	}
 	
 	public static HealthBar healthBar() {

@@ -1,8 +1,8 @@
-package base;
+package base.game;
 
 import javafx.scene.input.KeyCode;
 
-final class KeyInput {
+public final class KeyInput {
 	
 	private KeyInput() {
 		

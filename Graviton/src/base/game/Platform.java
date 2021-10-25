@@ -1,4 +1,4 @@
-package base;
+package base.game;
 
 import fxutils.*;
 import javafx.scene.layout.StackPane;
@@ -23,6 +23,14 @@ public class Platform extends StackPane {
 		this.height = height;
 		setMinWidth(width);
 		setMinHeight(height);
+	}
+	
+	public double width() {
+		return width;
+	}
+	
+	public double height() {
+		return height;
 	}
 	
 }

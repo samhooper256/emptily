@@ -1,4 +1,4 @@
-package base;
+package enemies;
 
 public interface HittableEnemy extends Enemy {
 	

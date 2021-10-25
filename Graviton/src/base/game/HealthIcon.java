@@ -1,5 +1,6 @@
-package base;
+package base.game;
 
+import base.Main;
 import javafx.scene.image.ImageView;
 
 public class HealthIcon extends ImageView {

@@ -1,5 +1,8 @@
-package base;
+package enemies;
 
+import base.DelayUpdatable;
+import base.Main;
+import base.game.content.Intersections;
 import javafx.scene.shape.Circle;
 
 public class LineBullet extends Circle implements DelayUpdatable {
@@ -41,13 +44,13 @@ public class LineBullet extends Circle implements DelayUpdatable {
 		double sec = nsSinceLastFrame / 1e9;
 		setLayoutX(x() + sec * xvel);
 		setLayoutY(y() + sec * yvel);
-		if(Main.pane().intersectsAnyPlatformsOrDoors(this))
-			Main.pane().requestRemove(this);
+		if(Intersections.intersectsAnyPlatformsOrDoors(this))
+			Main.content().requestRemove(this);
 		else {
-			HittableEnemy enemy = Main.pane().intersectsHittableEnemy(this);
+			HittableEnemy enemy = Intersections.intersectsHittableEnemy(this);
 			if(enemy != null) {
 				enemy.takeHit(DAMAGE);
-				Main.pane().requestRemove(this);
+				Main.content().requestRemove(this);
 			}
 		}
 	}

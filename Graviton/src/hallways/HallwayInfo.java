@@ -28,4 +28,8 @@ public interface HallwayInfo {
 		return new BoundingBox(tlx(), tly(), layout().width(), layout().height());
 	}
 	
+	/** Two {@link HallwayInfo} objects are equal if they have the same {@link #tlx()} and {@link #tly()}. */
+	@Override
+	boolean equals(Object obj);
+	
 }

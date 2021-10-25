@@ -1,7 +1,6 @@
 package floors;
 
 import java.util.*;
-import java.util.stream.Collectors;
 
 import hallways.HallwayInfo;
 import javafx.geometry.Side;
@@ -16,6 +15,7 @@ import utils.*;
 public final class FloorPlanBuilder {
 
 	private static final double DEFAULT_HALLWAY_WALL_WIDTH = 10;
+	
 	
 	private static Iterable<DoorGap> randomOrder(DoorGapCollection<DoorGap> gaps) {
 		ArrayList<DoorGap> a = new ArrayList<>(gaps.size());
@@ -43,12 +43,14 @@ public final class FloorPlanBuilder {
 
 	private Queue<RoomInfo> q;
 	private Map<RoomInfo, Set<DoorGap>> usedGaps;
+	private Map<RoomInfo, Set<HallwayJoin>> joinMap;
 	private List<HallwayInfo> hallways;
 	
 	public FloorPlan build() {
 		q = new ArrayDeque<>();
 		usedGaps = new HashMap<>();
 		hallways = new ArrayList<>();
+		joinMap = new HashMap<>();
 		RoomLayout startLayout = getRandomLayout();
 		RoomInfo startInfo = RoomInfo.re(startLayout, 0, 0);
 		q.add(startInfo);
@@ -65,7 +67,7 @@ public final class FloorPlanBuilder {
 //			System.out.printf("\troom gaps remaining: %s%n%n", r.layout().gaps());
 		}
 		
-		return FloorPlan.of(startInfo, usedGaps.keySet(), hallways);
+		return new FloorPlanImpl(startInfo, usedGaps.keySet(), hallways, joinMap);
 	}
 	
 	private void addRoom() {
@@ -136,11 +138,6 @@ public final class FloorPlanBuilder {
 		}
 	}
 	
-	private String formattedInfos(Collection<? extends RoomInfo> q) {
-		return q.stream().map(ri -> String.format("(%.1f, %.1f)", ri.tlx() / 480, ri.tly() / 480))
-				.collect(Collectors.joining(", "));
-	}
-	
 	/** o is the new room.*/
 	private boolean tryPlace(RoomInfo i, DoorGap igap, RoomLayout olayout, DoorGap ogap, double tlx, double tly) {
 		if(canPlaceRoom(olayout, tlx, tly)) {
@@ -152,7 +149,9 @@ public final class FloorPlanBuilder {
 				q.add(o);
 			if(allGapsUsed(i))
 				q.remove();
-			hallways.add(makeHallway(i, igap, o, ogap));
+			HallwayInfo hi = makeHallway(i, igap, o, ogap);
+			addJoin(i, hi, o);
+			hallways.add(hi);
 			return true;
 		}
 		return false;
@@ -206,6 +205,16 @@ public final class FloorPlanBuilder {
 			double y = leftRoom.tly() + leftRoom.layout().borderThickness() + leftGap.topDist() - hallwayWallWidth;
 			return HallwayInfo.of(x, y, leftGap.sizeIn(leftRoom), hallwayLength, hallwayWallWidth, false);
 		}
+	}
+	
+	private void addJoin(RoomInfo a, HallwayInfo hi, RoomInfo b) {
+		HallwayJoin hj = new HallwayJoin(a, hi, b);
+		if(!joinMap.containsKey(a))
+			joinMap.put(a, new HashSet<>());
+		if(!joinMap.containsKey(b))
+			joinMap.put(b, new HashSet<>());
+		joinMap.get(a).add(hj);
+		joinMap.get(b).add(hj);
 	}
 	
 	private Set<DoorGap> usedGaps(RoomInfo info) {

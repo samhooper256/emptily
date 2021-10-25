@@ -2,7 +2,7 @@ package rooms.spawns;
 
 import java.util.function.Supplier;
 
-import base.Enemy;
+import enemies.Enemy;
 
 public interface EnemySpawn extends Supplier<Enemy> {
 

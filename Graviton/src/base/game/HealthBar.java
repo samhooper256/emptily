@@ -1,4 +1,4 @@
-package base;
+package base.game;
 
 import javafx.geometry.Insets;
 import javafx.scene.layout.HBox;
@@ -8,7 +8,7 @@ public final class HealthBar extends HBox {
 	private static final int DEFAULT_HEALTH = 3;
 	private static final double SPACING = 8, PADDING = SPACING * 1.5;
 	
-	private final int maxhp;
+	private int maxhp;
 	private int hp;
 	
 	public HealthBar() {
@@ -36,6 +36,17 @@ public final class HealthBar extends HBox {
 		return (HealthIcon) getChildren().get(index);
 	}
 
+	public void reset() {
+		maxhp = 3;
+		refill();
+	}
+	
+	public void refill() {
+		hp = maxhp;
+		for(int i = 0; i < maxhp; i++)
+			icon(i).fill();
+	}
+	
 	public int maxhp() {
 		return maxhp;
 	}

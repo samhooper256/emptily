@@ -1,7 +1,11 @@
-package base;
+package base.game;
 
 import java.util.function.Consumer;
 
+import base.DelayUpdatable;
+import base.Main;
+import base.game.content.Intersections;
+import enemies.Enemy;
 import fxutils.Backgrounds;
 import javafx.geometry.*;
 import javafx.scene.Node;
@@ -13,6 +17,7 @@ public class Player extends StackPane implements DelayUpdatable {
 	private static final GravityMode DEFAULT_MODE = GravityMode.DOWN;
 	private static final double DEFAULT_WIDTH = 20, DEFAULT_HEIGHT = DEFAULT_WIDTH;
 	private static final double COLLIDE_FLUSH = 0.5;
+	/** in nanos*/
 	private static final long INVINCIBILITY_TIME = 1_000_000_000L; 
 	
 	private final StackPane color;
@@ -24,8 +29,6 @@ public class Player extends StackPane implements DelayUpdatable {
 	public Player() {
 		yvel = 0;
 		xvel = 0;
-		x = 300;
-		y = 50;
 		mode = DEFAULT_MODE;
 		color = new StackPane();
 		color.setOpaqueInsets(new Insets(1));
@@ -44,7 +47,7 @@ public class Player extends StackPane implements DelayUpdatable {
 		double oldX = x, oldY = y;
 		double xaccel = mode.xAccel(), yaccel = mode.yAccel();
 		if(vincible()) {
-			Enemy enemy = Main.pane().getEnemyIntersectingPlayer();
+			Enemy enemy = Intersections.getEnemyIntersectingPlayer();
 			if(enemy != null)
 				takeHit();
 		}
@@ -59,7 +62,7 @@ public class Player extends StackPane implements DelayUpdatable {
 		boolean backtrackedX = false, backtrackedY = false;
 		//X:
 		setLayoutX(x);
-		Node p = Main.pane().getPlatformOrDoorIntersecting(this);
+		Node p = Intersections.getPlatformOrDoorIntersecting(this);
 		if(p != null) {
 			backtrackedX = true;
 			x = findX(oldX, x, p);
@@ -71,7 +74,7 @@ public class Player extends StackPane implements DelayUpdatable {
 		
 		//Y:
 		setLayoutY(y);
-		p = Main.pane().getPlatformOrDoorIntersecting(this);
+		p = Intersections.getPlatformOrDoorIntersecting(this);
 		if(p != null) {
 			backtrackedY = true;
 			y = findY(oldY, y, p);
@@ -93,8 +96,14 @@ public class Player extends StackPane implements DelayUpdatable {
 	}
 	
 	public void takeHit() {
-		invincibilityTimer = INVINCIBILITY_TIME;
+		System.out.printf("[enter] takeHit()%n");
 		Main.healthBar().hit();
+		if(hp() == 0) {
+			Main.outerScene().die();
+		}
+		else {
+			invincibilityTimer = INVINCIBILITY_TIME;
+		}
 	}
 	
 	public void setMode(GravityMode mode) {
@@ -109,6 +118,26 @@ public class Player extends StackPane implements DelayUpdatable {
 		return y;
 	}
 	
+	public void setX(double x) {
+		this.x = x;
+		setLayoutX(x);
+	}
+	
+	public void setY(double y) {
+		this.y = y;
+		setLayoutY(y);
+	}
+	
+	/** Moves this {@link Player} to the given coordinates, sets its velocity to zero, and sets its gravity
+	 * direction to down.*/
+	public void resetTo(double x, double y) {
+		xvel = 0;
+		yvel = 0;
+		setX(x);
+		setY(y);
+		mode = GravityMode.DOWN;
+	}
+	
 	public double width() {
 		return getWidth();
 	}
@@ -119,6 +148,10 @@ public class Player extends StackPane implements DelayUpdatable {
 	
 	public Point2D center() {
 		return new Point2D(x() + width() / 2, y() + height() / 2);
+	}
+	
+	public int hp() {
+		return Main.healthBar().hp();
 	}
 	
 	private double findX(double safe, double collide, Node p) {
@@ -132,7 +165,7 @@ public class Player extends StackPane implements DelayUpdatable {
 	/** assumes current position is collideY*/
 	private double findCoord(double safe, double collide, Node p, Consumer<Double> setter) {
 		while(Math.abs(safe - collide) > COLLIDE_FLUSH) {
-			double mid = Maths.mean(safe, collide);
+			double mid = (safe + collide) / 2.0;
 			setter.accept(mid);
 			if(intersects(p)) {
 				collide = mid;

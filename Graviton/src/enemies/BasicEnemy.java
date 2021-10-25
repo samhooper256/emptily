@@ -1,5 +1,8 @@
-package base;
+package enemies;
 
+import base.DelayUpdatable;
+import base.Main;
+import base.game.content.Intersections;
 import javafx.geometry.Point2D;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
@@ -36,14 +39,14 @@ public class BasicEnemy extends Rectangle implements HittableEnemy, DelayUpdatab
 	@Override
 	public void update(long nsSinceLastFrame) {
 		nsSinceLastPath += nsSinceLastFrame;
-		info = Main.pane().roomInfo();
+		info = Main.content().currentRoom();
 		layout = info.layout();
 		enemy = center();
-		player = Main.pane().player().center();
+		player = Main.content().player().center();
 		boolean oldCanSeePlayer = canSeePlayer;
 		boolean newCanSeePlayer = canSeePlayer();
 		canSeePlayer = newCanSeePlayer;
-		if(Main.pane().intersectsPlayer(this)) {
+		if(Intersections.intersectsPlayer(this)) {
 			discardPath();
 			return;
 		}
@@ -85,8 +88,6 @@ public class BasicEnemy extends Rectangle implements HittableEnemy, DelayUpdatab
 	}
 	
 	private void discardPath() {
-		if(path != null)
-			System.out.println("PATH DISCARDED");
 		path = null;
 	}
 
@@ -106,7 +107,6 @@ public class BasicEnemy extends Rectangle implements HittableEnemy, DelayUpdatab
 		path = graph.path(enemy, player);
 		pathIndex = 0;
 		nsSinceLastPath = 0;
-		System.out.printf("path=%s%n", path);
 	}
 	
 	private void tickTowards(Point2D dest, long nsSinceLastFrame) {
@@ -119,11 +119,11 @@ public class BasicEnemy extends Rectangle implements HittableEnemy, DelayUpdatab
 		double oldX = x(), oldY = y();
 		boolean canX = true, canY = true;
 		setLayoutX(oldX + xvel * sec);
-		if(Main.pane().intersectsAnyPlatformsOrDoors(this))
+		if(Intersections.intersectsAnyPlatformsOrDoors(this))
 			canX = false;
 		setLayoutX(oldX);
 		setLayoutY(y() + yvel * sec);
-		if(Main.pane().intersectsAnyPlatformsOrDoors(this))
+		if(Intersections.intersectsAnyPlatformsOrDoors(this))
 			canY = false;
 		setLayoutY(oldY);
 		if(!canX && !canY) {
@@ -155,7 +155,12 @@ public class BasicEnemy extends Rectangle implements HittableEnemy, DelayUpdatab
 	public void takeHit(double damage) {
 		health -= damage;
 		if(health <= 0)
-			Main.pane().requestRemove(this);
+			onDeath();
+	}
+
+	private void onDeath() {
+		Main.content().requestRemove(this);
+		Main.content().addBurst(new CircleBurst(Color.RED, 20), x(), y());
 	}
 	
 }

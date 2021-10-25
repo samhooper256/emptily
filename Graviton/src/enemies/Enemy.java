@@ -1,4 +1,4 @@
-package base;
+package enemies;
 
 import javafx.geometry.Bounds;
 import javafx.scene.Node;
