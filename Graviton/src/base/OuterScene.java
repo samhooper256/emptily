@@ -4,7 +4,7 @@ import base.game.*;
 import base.game.popups.*;
 import floors.Floor;
 import javafx.scene.*;
-import javafx.scene.input.KeyEvent;
+import javafx.scene.input.*;
 import javafx.scene.layout.StackPane;
 
 public class OuterScene extends Scene implements DelayUpdatable {
@@ -18,6 +18,7 @@ public class OuterScene extends Scene implements DelayUpdatable {
 	private final LevelCompletePopup lcp;
 	private final DeathPopup deathPopup;
 	private final YouWinPopup youWinPopup;
+	private final PauseLayer pauseLayer;
 	
 	public OuterScene() {
 		this(new StackPane(), DEFAULT_WIDTH, DEFAULT_HEIGHT);
@@ -32,15 +33,25 @@ public class OuterScene extends Scene implements DelayUpdatable {
 		this.lcp = new LevelCompletePopup();
 		this.deathPopup = new DeathPopup();
 		this.youWinPopup = new YouWinPopup();
+		this.pauseLayer = new PauseLayer(outerPane);
 		setOnKeyPressed(this::keyPressed);
 		outerPane.getChildren().add(mainMenu);
 		mainScene.widthProperty().bind(widthProperty());
 		mainScene.heightProperty().bind(heightProperty());
+		
+		getStylesheets().add(Main.class.getResource(Main.RESOURCES_PREFIX + "style.css").toExternalForm());
 	}
 
 	private void keyPressed(KeyEvent ke) {
-		if(isShowingMainScene())
-			mainScene.keyPressed(ke);
+		if(isShowingMainScene()) {
+			if(ke.getCode() == KeyCode.ESCAPE)
+				if(isPaused())
+					unpause();
+				else
+					requestPause();
+			else
+				mainScene.keyPressed(ke);
+		}
 	}
 	
 	public MainScene mainScene() {
@@ -49,7 +60,7 @@ public class OuterScene extends Scene implements DelayUpdatable {
 
 	@Override
 	public void update(long nsSinceLastFrame) {
-		if(isShowingMainScene() && !isShowingPopup())
+		if(isShowingMainScene() && !isShowingPopup() && !isPaused())
 			mainScene().update(nsSinceLastFrame);
 	}
 	
@@ -106,6 +117,7 @@ public class OuterScene extends Scene implements DelayUpdatable {
 	
 	public void switchToMainMenu() {
 		outerPane.getChildren().clear();
+		pauseLayer.setVisible(false);
 		outerPane.getChildren().add(mainMenu);
 	}
 	
@@ -120,7 +132,25 @@ public class OuterScene extends Scene implements DelayUpdatable {
 	}
 	
 	public boolean isShowingPopup() {
-		return outerPane.getChildren().size() >= 3;
+		return outerPane.getChildren().size()  == 3 && outerPane.getChildren().get(2) instanceof EndingPopup;
+	}
+	
+	public boolean isPaused() {
+		return pauseLayer.isVisible();
+	}
+	
+	public void requestPause() {
+		if(isShowingMainScene() && !isShowingPopup())
+			showPauseLayer();
+	}
+	
+	private void showPauseLayer() {
+		pauseLayer.animateIn();
+		outerPane.getChildren().add(pauseLayer);
+	}
+	
+	public void unpause() {
+		pauseLayer.animateOut();
 	}
 	
 }

@@ -10,7 +10,6 @@ import fxutils.*;
 import javafx.animation.*;
 import javafx.animation.Animation.Status;
 import javafx.beans.property.SimpleDoubleProperty;
-import javafx.beans.value.*;
 import javafx.geometry.*;
 import javafx.scene.Node;
 import javafx.scene.layout.*;
@@ -36,7 +35,7 @@ public class Player extends StackPane implements DelayUpdatable {
 	private GravityMode mode;
 	private double xvel, yvel, x, y;
 	private long invincibilityTimer = 0;
-	private boolean updateCalled; //true if update(long) has been called, false otherwise.
+	private boolean introStarted;
 	
 	public Player() {
 		yvel = 0;
@@ -50,7 +49,7 @@ public class Player extends StackPane implements DelayUpdatable {
 		color.setMaxWidth(DEFAULT_WIDTH);
 		color.setMaxHeight(DEFAULT_HEIGHT);
 		getChildren().addAll(color);
-		updateCalled = false;
+		introStarted = false;
 		setVisible(false);
 		introCircle1 = new Circle(0, 0, 4);
 		introCircle1.setFill(PLAYER_COLOR);
@@ -87,8 +86,8 @@ public class Player extends StackPane implements DelayUpdatable {
 	
 	@Override
 	public void update(long nsSinceLastFrame) {
-		if(!updateCalled) {
-			updateCalled = true;
+		if(!introStarted) {
+			introStarted = true;
 			setOpacity(0);
 			setVisible(true);
 			introTimeline.playFromStart();
@@ -189,6 +188,8 @@ public class Player extends StackPane implements DelayUpdatable {
 		yvel = 0;
 		setX(x);
 		setY(y);
+		introTimeline.stop();
+		introStarted = false;
 		mode = GravityMode.DOWN;
 	}
 	

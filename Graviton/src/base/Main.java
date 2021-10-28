@@ -10,6 +10,8 @@ import javafx.application.*;
 import javafx.scene.image.Image;
 import javafx.stage.Stage;
 
+//TODO: While the player is animating in, show what level you are starting on. Maybe do this by having the number
+//of circles that swirl into the player be the same as the number level?
 public class Main extends Application {
 	
 	private static final int HEALTH_ICON_SIZE = 32;
@@ -17,7 +19,8 @@ public class Main extends Application {
 			FULL_HEALTH = Images.get("fullhealth.png", HEALTH_ICON_SIZE, HEALTH_ICON_SIZE, false, true),
 			EMPTY_HEALTH = Images.get("emptyhealth.png", HEALTH_ICON_SIZE, HEALTH_ICON_SIZE, false, true);
 	
-	private static final String RESOURCES_PREFIX = "/resources/";
+	static final String RESOURCES_PREFIX = "/resources/";
+	
 	
 	private static Stage stage;
 	private static OuterScene outerScene;

@@ -208,7 +208,6 @@ public final class FloorPlanBuilder {
 	}
 	
 	private void addJoin(RoomInfo a, HallwayInfo hi, RoomInfo b) {
-		System.out.printf("\t[enter] addJoin%n");
 		HallwayJoin hj = new HallwayJoin(a, hi, b);
 		if(!joinMap.containsKey(a))
 			joinMap.put(a, new HashSet<>());
