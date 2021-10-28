@@ -6,25 +6,37 @@ import base.DelayUpdatable;
 import base.Main;
 import base.game.content.Intersections;
 import enemies.Enemy;
-import fxutils.Backgrounds;
+import fxutils.*;
+import javafx.animation.*;
+import javafx.animation.Animation.Status;
+import javafx.beans.property.SimpleDoubleProperty;
+import javafx.beans.value.*;
 import javafx.geometry.*;
 import javafx.scene.Node;
 import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
+import javafx.scene.shape.*;
+import javafx.util.Duration;
 
 public class Player extends StackPane implements DelayUpdatable {
 	
 	private static final GravityMode DEFAULT_MODE = GravityMode.DOWN;
+	private static final Color PLAYER_COLOR = Color.BLUE;
 	private static final double DEFAULT_WIDTH = 20, DEFAULT_HEIGHT = DEFAULT_WIDTH;
+	private static final double INTRO_RADIUS = DEFAULT_WIDTH / 2 + 20;
 	private static final double COLLIDE_FLUSH = 0.5;
 	/** in nanos*/
 	private static final long INVINCIBILITY_TIME = 1_000_000_000L; 
 	
 	private final StackPane color;
+	private final Timeline introTimeline;
+	private final Circle introCircle1, introCircle2;
+	private final SimpleDoubleProperty introFrac;
 	
 	private GravityMode mode;
 	private double xvel, yvel, x, y;
 	private long invincibilityTimer = 0;
+	private boolean updateCalled; //true if update(long) has been called, false otherwise.
 	
 	public Player() {
 		yvel = 0;
@@ -32,17 +44,61 @@ public class Player extends StackPane implements DelayUpdatable {
 		mode = DEFAULT_MODE;
 		color = new StackPane();
 		color.setOpaqueInsets(new Insets(1));
-		color.setBackground(Backgrounds.of(Color.BLUE));
+		color.setBackground(Backgrounds.of(PLAYER_COLOR));
 		color.setMinWidth(DEFAULT_WIDTH);
 		color.setMinHeight(DEFAULT_HEIGHT);
 		color.setMaxWidth(DEFAULT_WIDTH);
 		color.setMaxHeight(DEFAULT_HEIGHT);
 		getChildren().addAll(color);
+		updateCalled = false;
+		setVisible(false);
+		introCircle1 = new Circle(0, 0, 4);
+		introCircle1.setFill(PLAYER_COLOR);
+		introCircle2 = new Circle(0, 0, 4);
+		introCircle2.setFill(PLAYER_COLOR);
+		introFrac = new SimpleDoubleProperty();
+		introFrac.addListener((x, ov, nv) -> {
+			double frac = nv.doubleValue();
+			animateIntro(frac);
+		});
+		introTimeline = new Timeline();
+		introTimeline.getKeyFrames().add(new KeyFrame(Duration.ZERO, new KeyValue(this.opacityProperty(), 0)));
+		introTimeline.getKeyFrames().add(new KeyFrame(Duration.ZERO, new KeyValue(introCircle1.opacityProperty(), 1)));
+		introTimeline.getKeyFrames().add(new KeyFrame(Duration.ZERO, new KeyValue(introCircle2.opacityProperty(), 1)));
+		introTimeline.getKeyFrames().add(new KeyFrame(Duration.ZERO, new KeyValue(introFrac, 0)));
+		introTimeline.getKeyFrames().add(new KeyFrame(Duration.millis(1000), new KeyValue(this.opacityProperty(), 1)));
+		introTimeline.getKeyFrames().add(new KeyFrame(Duration.millis(800), new KeyValue(introCircle1.opacityProperty(), 0)));
+		introTimeline.getKeyFrames().add(new KeyFrame(Duration.millis(800), new KeyValue(introCircle2.opacityProperty(), 0)));
+		introTimeline.getKeyFrames().add(new KeyFrame(Duration.millis(1000), new KeyValue(introFrac, 1)));
 		
+	}
+	
+	private void animateIntro(double frac) {
+		double ang1 = frac * 2 * Math.PI - Math.PI / 2;
+		double ang2 = ang1 + Math.PI;
+		double pcx = getLayoutX() + width() / 2, pcy = getLayoutY() + height() / 2;
+		double radius = INTRO_RADIUS * (1 - frac);
+		double c1cx = Math.cos(ang1) * radius + pcx, c1cy = Math.sin(ang1) * radius + pcy;
+		double c2cx = Math.cos(ang2) * radius + pcx, c2cy = Math.sin(ang2) * radius + pcy;
+		
+		Nodes.setLayout(introCircle1, c1cx, c1cy);
+		Nodes.setLayout(introCircle2, c2cx, c2cy);
 	}
 	
 	@Override
 	public void update(long nsSinceLastFrame) {
+		if(!updateCalled) {
+			updateCalled = true;
+			setOpacity(0);
+			setVisible(true);
+			introTimeline.playFromStart();
+		}
+		else if(introTimeline.getStatus() != Status.RUNNING) {
+			updateIfNotInIntro(nsSinceLastFrame);
+		}
+	}
+
+	private void updateIfNotInIntro(long nsSinceLastFrame) {
 		double sec = nsSinceLastFrame / 1e9;
 		double oldX = x, oldY = y;
 		double xaccel = mode.xAccel(), yaccel = mode.yAccel();
@@ -83,7 +139,6 @@ public class Player extends StackPane implements DelayUpdatable {
 		}
 		if(!backtrackedY)
 			yvel += yaccel * sec;
-		
 	}
 	
 	
@@ -96,14 +151,11 @@ public class Player extends StackPane implements DelayUpdatable {
 	}
 	
 	public void takeHit() {
-		System.out.printf("[enter] takeHit()%n");
 		Main.healthBar().hit();
-		if(hp() == 0) {
+		if(hp() == 0)
 			Main.outerScene().die();
-		}
-		else {
+		else
 			invincibilityTimer = INVINCIBILITY_TIME;
-		}
 	}
 	
 	public void setMode(GravityMode mode) {
@@ -120,11 +172,13 @@ public class Player extends StackPane implements DelayUpdatable {
 	
 	public void setX(double x) {
 		this.x = x;
+		introCircle1.setLayoutX(x);
 		setLayoutX(x);
 	}
 	
 	public void setY(double y) {
 		this.y = y;
+		introCircle1.setLayoutY(y);
 		setLayoutY(y);
 	}
 	
@@ -176,4 +230,9 @@ public class Player extends StackPane implements DelayUpdatable {
 		}
 		return safe;
 	}
+	
+	public Node[] introNodes() {
+		return new Node[] {introCircle1, introCircle2};
+	}
+	
 }

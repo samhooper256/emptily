@@ -9,11 +9,12 @@ import utils.RNG;
 
 public enum Floor {
 
-	FIRST(2, List.of(
+	FIRST(5, List.of(
 			RoomLayout.builder()
 			.setSize(400, 400)
 			.setGaps(leftGap(100, 400), rightGap(100, 400), topGap(100, 400), bottomGap(100, 400))
-			.addBasicSpawn(190, 190)
+			.addBasicSpawnCentered(200, 200)
+			.setPlayerSpawn(200, 200)
 			.build(),
 			RoomLayout.builder()
 			.setSize(800, 400)
@@ -21,6 +22,15 @@ public enum Floor {
 			.setGaps(topGap(100, 800), bottomGap(100, 800))
 			.addBasicSpawn(90, 190)
 			.addBasicSpawn(690, 190)
+			.setPlayerSpawn(400, 150)
+			.build(),
+			RoomLayout.builder()
+			.setSize(400, 800)
+			.setRects(RectangleLayout.of(100, 100, 200, 200), RectangleLayout.of(100, 500, 200, 200))
+			.setGaps(leftGap(100, 800), rightGap(100, 800))
+			.addBasicSpawnCentered(200, 50)
+			.addBasicSpawnCentered(200, 750)
+			.setPlayerSpawn(200, 400)
 			.build()
 	)),
 	SECOND(7, List.of(
@@ -28,11 +38,13 @@ public enum Floor {
 			.setSize(400, 400)
 			.setGaps(leftGap(100, 400), rightGap(100, 400), topGap(100, 400), bottomGap(100, 400))
 			.addBasicSpawn(20, 20)
+			.setPlayerSpawn(200, 200)
 			.build(),
 			RoomLayout.builder()
 			.setSize(800, 800)
 			.setGaps(leftGap(100, 800), rightGap(100, 800), topGap(100, 800), bottomGap(100, 800))
 			.addBasicSpawn(20, 20)
+			.setPlayerSpawn(400, 200)
 			.build()
 	)),
 	THIRD(10, List.of(
@@ -43,6 +55,7 @@ public enum Floor {
 			.addBasicSpawn(20, 360)
 			.addBasicSpawn(360, 20)
 			.addBasicSpawn(360, 360)
+			.setPlayerSpawn(200, 200)
 			.build(),
 			RoomLayout.builder()
 			.setSize(600, 400)
@@ -52,6 +65,7 @@ public enum Floor {
 			.addBasicSpawn(560, 20)
 			.addBasicSpawn(560, 360)
 			.addBasicSpawn(290, 360)
+			.setPlayerSpawn(300, 250)
 			.build(),
 			RoomLayout.builder()
 			.setSize(800, 800)
@@ -77,11 +91,12 @@ public enum Floor {
 			.addBasicSpawn(20, 760)
 			.addBasicSpawn(60, 760)
 			.addBasicSpawn(100, 680)
+			.setPlayerSpawn(400, 200)
 			.build()
 	));
 	
-//	public static final List<Floor> ORDER = List.of(Floor.FIRST, Floor.SECOND, Floor.THIRD);
-	public static final List<Floor> ORDER = List.of(Floor.FIRST);
+	public static final List<Floor> ORDER = List.of(Floor.FIRST, Floor.SECOND, Floor.THIRD);
+//	public static final List<Floor> ORDER = List.of(Floor.FIRST);
 	
 	private static final double INTERIOR_CUT = RoomLayout.DEFAULT_BORDER_THICKNESS * 2;
 
@@ -99,13 +114,13 @@ public enum Floor {
 		return DoorGap.bottom(side, side);
 	}
 	
-	private static DoorGap leftGap(double width, double exteriorHeight) {
-		double side = (exteriorHeight - INTERIOR_CUT - width) / 2;
+	private static DoorGap leftGap(double height, double exteriorHeight) {
+		double side = (exteriorHeight - INTERIOR_CUT - height) / 2;
 		return DoorGap.left(side, side);
 	}
 	
-	private static DoorGap rightGap(double width, double exteriorHeight) {
-		double side = (exteriorHeight - INTERIOR_CUT - width) / 2;
+	private static DoorGap rightGap(double height, double exteriorHeight) {
+		double side = (exteriorHeight - INTERIOR_CUT - height) / 2;
 		return DoorGap.right(side, side);
 	}
 	

@@ -11,19 +11,23 @@ final class RoomLayoutImpl implements RoomLayout {
 
 	private final double width, height;
 	private final HashSet<RectangleLayout> interiorRects;
+	private final RectangleLayout top, bottom, left, right;
+	private final Collection<EnemySpawn> spawns;
+	private final double playerSpawnX, playerSpawnY;
+	
 	private HorizontalGapCollection topGaps, bottomGaps;
 	private VerticalGapCollection leftGaps, rightGaps;
 	private DoorGapCollection<DoorGap> allGaps;
-	private final RectangleLayout top, bottom, left, right;
-	private final Collection<EnemySpawn> spawns;
 	
 	/** Assumes {@code spawns} is not modified after being passed to this constructor.*/
-	public RoomLayoutImpl(double width, double height, RectangleLayout[] interiorRects, DoorGap[] gaps,
-			Collection<EnemySpawn> spawns) {
+	public RoomLayoutImpl(double width, double height, double playerSpawnX, double playerSpawnY,
+			RectangleLayout[] interiorRects, DoorGap[] gaps, Collection<EnemySpawn> spawns) {
 		this.width = width;
 		this.height = height;
 		this.interiorRects = new HashSet<>();
 		this.spawns = spawns;
+		this.playerSpawnX = playerSpawnX;
+		this.playerSpawnY = playerSpawnY;
 		top = RectangleLayout.of(0, 0, width, borderThickness());
 		bottom = RectangleLayout.of(0, height - borderThickness(), width, borderThickness());
 		left = RectangleLayout.of(0, 0, borderThickness(), height);
@@ -128,13 +132,23 @@ final class RoomLayoutImpl implements RoomLayout {
 	/** {@link #spawns() Spawns} are <em>not</em> copied.*/
 	@Override
 	public RoomLayout copy() {
-		return new RoomLayoutImpl(width, height, interiorRects.toArray(RectangleLayout[]::new), allGaps.toArray(),
-				spawns);
+		return new RoomLayoutImpl(width, height, playerSpawnX, playerSpawnY,
+				interiorRects.toArray(RectangleLayout[]::new), allGaps.toArray(), spawns);
 	}
 	
 	@Override
 	public Collection<EnemySpawn> spawns() {
 		return spawns;
+	}
+
+	@Override
+	public double playerSpawnX() {
+		return playerSpawnX;
+	}
+
+	@Override
+	public double playerSpawnY() {
+		return playerSpawnY;
 	}
 	
 }

@@ -24,8 +24,6 @@ public class MainPane extends StackPane implements DelayUpdatable {
 		clearedRooms = new HashSet<>();
 		isFighting = false;
 		
-		startLevel(0);
-		
 		getChildren().add(content);
 	}
 	

@@ -63,6 +63,12 @@ public interface RoomLayout {
 
 	DoorGapCollection<DoorGap> gaps();
 	
+	/** The x-coordinate of the <b>CENTER</b> of the player. */
+	double playerSpawnX();
+	
+	/** The y-coordinate of the <b>CENTER</b> of the player. */
+	double playerSpawnY();
+	
 	default int gapCount(Side side) {
 		return gaps(side).size();
 	}

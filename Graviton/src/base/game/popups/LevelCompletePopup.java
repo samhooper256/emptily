@@ -45,5 +45,18 @@ public class LevelCompletePopup extends ExpandingPopup {
 		});
 		nextLevel.setOnAction(eh -> Main.pane().startNextLevel());
 	}
+
+	public void startOpeningAnimation(int levelIndex) {
+		title.setText(String.format("Level %d Complete!", levelIndex + 1));
+		super.startOpeningAnimation();
+	}
+
+	@Override
+	public void startOpeningAnimation() {
+		title.setText("Level Complete!");
+		super.startOpeningAnimation();
+	}
+	
+	
 	
 }

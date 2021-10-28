@@ -35,7 +35,7 @@ public class Main extends Application {
 		Timer timer = new Timer();
 		timer.start();
 		
-		stage.setMaximized(true);
+//		stage.setMaximized(true);
 		stage.show();
 	}
 	

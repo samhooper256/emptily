@@ -51,7 +51,7 @@ public final class FloorPlanBuilder {
 		usedGaps = new HashMap<>();
 		hallways = new ArrayList<>();
 		joinMap = new HashMap<>();
-		RoomLayout startLayout = getRandomLayout();
+		RoomLayout startLayout = getCopyOfRandomLayout();
 		RoomInfo startInfo = RoomInfo.re(startLayout, 0, 0);
 		q.add(startInfo);
 		usedGaps.put(startInfo, new HashSet<>());
@@ -71,71 +71,71 @@ public final class FloorPlanBuilder {
 	}
 	
 	private void addRoom() {
-//		System.out.printf("[enter] addRoom(), allRooms: %s%n", formattedInfos(usedGaps.keySet()));
 		while(!q.isEmpty()) {
-//			System.out.printf("\tenter while%n");
 			RoomInfo i = q.peek();
-//			System.out.printf("\ti=(%.1f, %.1f)%n", i.tlx() / 480, i.tly() / 480);
 			RoomLayout ilayout = i.layout();
 			//ASSUMPTIONS: i still has at least one unused gap.
-			RoomLayout olayout = getRandomLayout();
-			Set<DoorGap> usedGaps = usedGaps(i);
-			for(DoorGap unusedGap : randomOrder(i.layout().gaps())) {
-				if(usedGaps.contains(unusedGap))
-					continue;
-				if(unusedGap.isHorizontal()) {
-					HorizontalGap igap = (HorizontalGap) unusedGap;
-					if(unusedGap.side() == Side.TOP) {
-						for(HorizontalGap ogap : olayout.bottomGaps()) {
-							if(igap.sizeIn(ilayout) != ogap.sizeIn(olayout))
-								continue;
-							double tlx = i.tlx() + ilayout.borderThickness() + igap.leftDist() - ogap.leftDist() -
-									olayout.borderThickness();
-							double tly = i.tly() - hallwayLength - olayout.exteriorHeight();
-							if(tryPlace(i, igap, olayout, ogap, tlx, tly))
-								return;
+			for(RoomLayout olayoutUncopied : getRandomLayoutPermuation()) {
+				RoomLayout olayout = RoomLayout.copyOf(olayoutUncopied);
+				Set<DoorGap> usedGaps = usedGaps(i);
+				for(DoorGap unusedGap : randomOrder(i.layout().gaps())) {
+					if(usedGaps.contains(unusedGap))
+						continue;
+					if(unusedGap.isHorizontal()) {
+						HorizontalGap igap = (HorizontalGap) unusedGap;
+						if(unusedGap.side() == Side.TOP) {
+							for(HorizontalGap ogap : olayout.bottomGaps()) {
+								if(igap.sizeIn(ilayout) != ogap.sizeIn(olayout))
+									continue;
+								double tlx = i.tlx() + ilayout.borderThickness() + igap.leftDist() - ogap.leftDist() -
+										olayout.borderThickness();
+								double tly = i.tly() - hallwayLength - olayout.exteriorHeight();
+								if(tryPlace(i, igap, olayout, ogap, tlx, tly))
+									return;
+							}
+						}
+						else if(unusedGap.side() == Side.BOTTOM) {
+							for(HorizontalGap ogap : olayout.topGaps()) {
+								if(igap.sizeIn(ilayout) != ogap.sizeIn(olayout))
+									continue;
+								double tlx = i.tlx() + ilayout.borderThickness() + igap.leftDist() - ogap.leftDist() -
+										olayout.borderThickness();
+								double tly = i.tly() + ilayout.exteriorHeight() + hallwayLength;
+								if(tryPlace(i, igap, olayout, ogap, tlx, tly))
+									return;
+							}
 						}
 					}
-					else if(unusedGap.side() == Side.BOTTOM) {
-						for(HorizontalGap ogap : olayout.topGaps()) {
-							if(igap.sizeIn(ilayout) != ogap.sizeIn(olayout))
-								continue;
-							double tlx = i.tlx() + ilayout.borderThickness() + igap.leftDist() - ogap.leftDist() -
-									olayout.borderThickness();
-							double tly = i.tly() + ilayout.exteriorHeight() + hallwayLength;
-							if(tryPlace(i, igap, olayout, ogap, tlx, tly))
-								return;
+					else {
+						VerticalGap igap = (VerticalGap) unusedGap;
+						if(unusedGap.side() == Side.LEFT) {
+							for(VerticalGap ogap : olayout.rightGaps()) {
+								if(igap.sizeIn(ilayout) != ogap.sizeIn(olayout))
+									continue;
+								double tlx = i.tlx() - hallwayLength - olayout.exteriorWidth();
+								double tly = (i.tly() + ilayout.borderThickness() + igap.topDist()) -
+										(ogap.topDist() + olayout.borderThickness());
+								if(tryPlace(i, igap, olayout, ogap, tlx, tly))
+									return;
+							}
 						}
-					}
-				}
-				else {
-					VerticalGap igap = (VerticalGap) unusedGap;
-					if(unusedGap.side() == Side.LEFT) {
-						for(VerticalGap ogap : olayout.rightGaps()) {
-							if(igap.sizeIn(ilayout) != ogap.sizeIn(olayout))
-								continue;
-							double tlx = i.tlx() - hallwayLength - olayout.exteriorWidth();
-							double tly = (i.tly() + ilayout.borderThickness() + igap.topDist()) -
-									(ogap.topDist() + olayout.borderThickness());
-							if(tryPlace(i, igap, olayout, ogap, tlx, tly))
-								return;
-						}
-					}
-					else if(unusedGap.side() == Side.RIGHT) {
-						for(VerticalGap ogap : olayout.leftGaps()) {
-							if(igap.sizeIn(ilayout) != ogap.sizeIn(olayout))
-								continue;
-							double tlx = i.tlx() + ilayout.exteriorWidth() + hallwayLength;
-							double tly = (i.tly() + i.layout().borderThickness() + igap.topDist()) -
-									(ogap.topDist() + olayout.borderThickness());
-							if(tryPlace(i, igap, olayout, ogap, tlx, tly))
-								return;
+						else if(unusedGap.side() == Side.RIGHT) {
+							for(VerticalGap ogap : olayout.leftGaps()) {
+								if(igap.sizeIn(ilayout) != ogap.sizeIn(olayout))
+									continue;
+								double tlx = i.tlx() + ilayout.exteriorWidth() + hallwayLength;
+								double tly = (i.tly() + i.layout().borderThickness() + igap.topDist()) -
+										(ogap.topDist() + olayout.borderThickness());
+								if(tryPlace(i, igap, olayout, ogap, tlx, tly))
+									return;
+							}
 						}
 					}
 				}
 			}
 			q.remove();
 		}
+		System.out.printf("%nEXITING ADDROOM WITHOUT ADDING A ROOM.%n%n");
 	}
 	
 	/** o is the new room.*/
@@ -208,6 +208,7 @@ public final class FloorPlanBuilder {
 	}
 	
 	private void addJoin(RoomInfo a, HallwayInfo hi, RoomInfo b) {
+		System.out.printf("\t[enter] addJoin%n");
 		HallwayJoin hj = new HallwayJoin(a, hi, b);
 		if(!joinMap.containsKey(a))
 			joinMap.put(a, new HashSet<>());
@@ -223,7 +224,13 @@ public final class FloorPlanBuilder {
 		return usedGaps.get(info);
 	}
 	
-	private RoomLayout getRandomLayout() {
+	private List<RoomLayout> getRandomLayoutPermuation() {
+		List<RoomLayout> perm = new ArrayList<>(layoutChoices);
+		Collections.shuffle(perm);
+		return perm;
+	}
+	
+	private RoomLayout getCopyOfRandomLayout() {
 		//If we don't make a copy of it, then when we remove the gaps later, it will remove those gaps
 		//from all rooms sharing that layout - not good!
 		return RoomLayout.copyOf(layoutChoices.get(RNG.intExclusive(0, layoutChoices.size())));

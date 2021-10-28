@@ -13,8 +13,9 @@ import rooms.VisibilityGraph;
 
 public class BasicEnemy extends Rectangle implements HittableEnemy, DelayUpdatable {
 
+	public static final double SIZE = 20;
+	
 	private static final double DEFAULT_HEALTH = 3;
-	private static final double SIZE = 20;
 	private static final double CORNER_DIST = SIZE * Math.sqrt(2) / 2 + 1;
 	private static final double POINT_PATH_THRESHOLD = 0.8;
 	/** in pixels per second. */

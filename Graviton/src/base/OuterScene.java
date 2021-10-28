@@ -63,7 +63,7 @@ public class OuterScene extends Scene implements DelayUpdatable {
 		if(levelIndex == Floor.count() - 1)
 			showPopup(youWinPopup);
 		else
-			showPopup(lcp);
+			showLCP(levelIndex);
 	}
 	
 	public void die() {
@@ -112,6 +112,11 @@ public class OuterScene extends Scene implements DelayUpdatable {
 	private void showPopup(EndingPopup popup) {
 		popup.startOpeningAnimation();
 		outerPane.getChildren().add(popup);
+	}
+
+	private void showLCP(int levelIndex) {
+		lcp.startOpeningAnimation(levelIndex);
+		outerPane.getChildren().add(lcp);
 	}
 	
 	public boolean isShowingPopup() {

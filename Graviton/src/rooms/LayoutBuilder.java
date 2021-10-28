@@ -7,7 +7,7 @@ import rooms.spawns.*;
 
 public final class LayoutBuilder {
 
-	private double width, height;
+	private double width, height, playerSpawnX, playerSpawnY;
 	private RectangleLayout[] rects;
 	private DoorGap[] gaps;
 	private List<EnemySpawn> spawns;
@@ -42,11 +42,26 @@ public final class LayoutBuilder {
 		return this;
 	}
 	
+	public LayoutBuilder setPlayerSpawn(double x, double y) {
+		playerSpawnX = x;
+		playerSpawnY = y;
+		return this;
+	}
+	
 	public LayoutBuilder addBasicSpawn(double relX, double relY) {
+		spawnList().add(new BasicEnemySpawn(relX, relY));
+		return this;
+	}
+	
+	public LayoutBuilder addBasicSpawnCentered(double centerX, double centerY) {
+		spawnList().add(BasicEnemySpawn.centered(centerX, centerY));
+		return this;
+	}
+	
+	private List<EnemySpawn> spawnList() {
 		if(spawns == null)
 			spawns = new ArrayList<>();
-		spawns.add(new BasicEnemySpawn(relX, relY));
-		return this;
+		return spawns;
 	}
 	
 	public RoomLayout build() {
@@ -55,11 +70,13 @@ public final class LayoutBuilder {
 		if(gaps == null || gaps.length == 0)
 			throw new IllegalStateException("DoorGaps have not been configured properly. "
 					+ "There must be at least one gap.");
+		if(playerSpawnX == 0 || playerSpawnY == 0)
+			throw new IllegalStateException("Player spawn not set");
 		if(rects == null)
 			rects = new RectangleLayout[0];
 		if(spawns == null)
 			spawns = Collections.emptyList();
-		return new RoomLayoutImpl(width, height, rects, gaps, spawns);
+		return new RoomLayoutImpl(width, height, playerSpawnX, playerSpawnY, rects, gaps, spawns);
 	}
 	
 }
