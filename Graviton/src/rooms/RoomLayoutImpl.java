@@ -45,10 +45,10 @@ final class RoomLayoutImpl implements RoomLayout {
 		Set<VerticalGap> lgaps = new HashSet<>(), rgaps = new HashSet<>();
 		for(DoorGap gap : gapsArr) {
 			switch(gap.side()) {
-				case TOP -> tgaps.add(gap.asHorizontal());
-				case BOTTOM -> bgaps.add(gap.asHorizontal());
-				case LEFT -> lgaps.add(gap.asVertical());
-				case RIGHT -> rgaps.add(gap.asVertical());
+				case TOP: tgaps.add(gap.asHorizontal()); break;
+				case BOTTOM: bgaps.add(gap.asHorizontal()); break;
+				case LEFT: lgaps.add(gap.asVertical()); break;
+				case RIGHT: rgaps.add(gap.asVertical()); break;
 			}
 		}
 		topGaps = HorizontalGapCollection.from(tgaps);
@@ -111,12 +111,15 @@ final class RoomLayoutImpl implements RoomLayout {
 	}
 	
 	boolean removeGap(DoorGap gap) {
-		return allGaps.remove(gap) && switch(gap.side()) {
-			case TOP -> topGaps.remove(gap);
-			case BOTTOM -> bottomGaps.remove(gap);
-			case LEFT -> leftGaps.remove(gap);
-			case RIGHT -> rightGaps.remove(gap);
-		};
+		if(!allGaps.remove(gap))
+			return false;
+		switch(gap.side()) {
+			case TOP: return topGaps.remove(gap);
+			case BOTTOM: return bottomGaps.remove(gap);
+			case LEFT: return leftGaps.remove(gap);
+			case RIGHT: return rightGaps.remove(gap);
+		}
+		throw new IllegalArgumentException(String.format("gap=%s", gap));
 	}
 	
 	@Override

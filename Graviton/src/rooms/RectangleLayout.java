@@ -10,6 +10,10 @@ public interface RectangleLayout {
 		return new RectangleLayoutImpl(x, y, width, height);
 	}
 	
+	static RectangleLayout centered(double centerX, double centerY, double width, double height) {
+		return of(centerX - width / 2, centerY - height / 2, width, height);
+	}
+	
 	double x();
 	
 	double y();

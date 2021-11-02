@@ -4,7 +4,7 @@ import javafx.geometry.Side;
 import rooms.RoomLayout;
 
 /** {@link #side()} is {@link Side#LEFT LEFT} or {@link Side#RIGHT RIGHT}.*/
-public sealed interface VerticalGap extends DoorGap permits VerticalGapImpl {
+public interface VerticalGap extends DoorGap /* permits VerticalGapImpl */ {
 
 	static VerticalGap of(Side side, double topDist, double bottomDist) {
 		return new VerticalGapImpl(side, topDist, bottomDist);

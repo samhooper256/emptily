@@ -3,7 +3,6 @@ package base.game;
 import fxutils.Backgrounds;
 import javafx.animation.*;
 import javafx.animation.Animation.Status;
-import javafx.beans.value.ChangeListener;
 import javafx.geometry.Pos;
 import javafx.scene.control.*;
 import javafx.scene.layout.*;

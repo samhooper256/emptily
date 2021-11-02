@@ -14,7 +14,7 @@ import javafx.geometry.*;
 import javafx.scene.Node;
 import javafx.scene.input.KeyCode;
 import javafx.scene.layout.*;
-import javafx.scene.shape.Line;
+import javafx.scene.shape.*;
 import rooms.*;
 import rooms.gaps.*;
 import rooms.spawns.EnemySpawn;
@@ -109,7 +109,6 @@ public class MainContent extends Pane implements DelayUpdatable {
 		addPlatforms(Utils.getHallwayPlatforms(hi));
 	}
 	
-	@SuppressWarnings("unchecked")
 	private void buildDoors() {
 		for(RoomInfo ri : floorPlan.rooms()) {
 			Collection<Door> doors = new ArrayList<>();
@@ -121,7 +120,8 @@ public class MainContent extends Pane implements DelayUpdatable {
 				doors.add(createLeftDoor(ri, dg));
 			for(VerticalGap dg : ri.layout().rightGaps())
 				doors.add(createRightDoor(ri, dg));
-			getChildren().addAll((Collection<? extends Node>) doors);
+			for(Door d : doors)
+				getChildren().add((Node) d);
 			doorMap.put(ri, doors);
 		}
 	}
@@ -174,13 +174,13 @@ public class MainContent extends Pane implements DelayUpdatable {
 	public void update(long nsSinceLastFrame) {
 		//we don't update the player or current room here, since that's done by MainPane.
 		for(Node n : getChildren())
-			if(n != player && n instanceof DelayUpdatable du)
-				du.update(nsSinceLastFrame);
+			if(n != player && n instanceof DelayUpdatable)
+				((DelayUpdatable) n).update(nsSinceLastFrame);
 		
 		for(Node n : removeRequests) {
 			boolean result = getChildren().remove(n);
-			if(result && n instanceof Enemy e)
-				enemies.remove(e);
+			if(result && n instanceof Enemy)
+				enemies.remove((Enemy) n);
 		}
 		removeRequests.clear();
 		

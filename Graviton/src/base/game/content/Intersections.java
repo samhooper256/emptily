@@ -46,9 +46,9 @@ public final class Intersections {
 	public static HittableEnemy intersectsHittableEnemy(Node node) {
 		Bounds bounds = node.getBoundsInParent();
 		for(Enemy n : content().enemies())
-			if(n instanceof HittableEnemy e)
-				if(bounds.intersects(e.getBoundsInParent()))
-					return e;
+			if(n instanceof HittableEnemy)
+				if(bounds.intersects(n.getBoundsInParent()))
+					return (HittableEnemy) n;
 		return null;
 	}
 	

@@ -1,5 +1,6 @@
 package base.game;
 
+import javafx.animation.Animation.Status;
 import javafx.animation.Interpolator;
 import javafx.animation.Transition;
 import javafx.scene.layout.StackPane;
@@ -7,7 +8,7 @@ import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
 import javafx.util.Duration;
 
-public abstract sealed class AbstractDoor extends StackPane implements Door permits HorizontalDoor, VerticalDoor {
+public abstract class AbstractDoor extends StackPane implements Door /* permits HorizontalDoor, VerticalDoor */ {
 	
 	protected static final Duration ANIMATION_DURATION = Duration.millis(1000);
 	
@@ -69,7 +70,14 @@ public abstract sealed class AbstractDoor extends StackPane implements Door perm
 	
 	@Override
 	public void open() {
-		openAnimation.playFromStart();
+		if(closeAnimation.getStatus() == Status.RUNNING) {
+			Duration time = ANIMATION_DURATION.subtract(closeAnimation.getCurrentTime());
+			closeAnimation.stop();
+			openAnimation.playFrom(time);
+		}
+		else {
+			openAnimation.playFromStart();
+		}
 	}
 	
 	@Override

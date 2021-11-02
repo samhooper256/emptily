@@ -4,7 +4,7 @@ import javafx.geometry.Side;
 import rooms.RoomInfo;
 import rooms.RoomLayout;
 
-public sealed interface DoorGap permits HorizontalGap, VerticalGap {
+public interface DoorGap /* permits HorizontalGap, VerticalGap */ {
 	
 	static HorizontalGap top(double leftDist, double rightDist) {
 		return HorizontalGap.of(Side.TOP, leftDist, rightDist);

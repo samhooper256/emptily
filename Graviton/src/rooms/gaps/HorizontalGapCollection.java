@@ -4,8 +4,8 @@ import java.util.*;
 
 import rooms.WallDirection;
 
-public sealed interface HorizontalGapCollection extends DoorGapCollection<HorizontalGap>
-		permits HorizontalGapCollectionImpl {
+public interface HorizontalGapCollection extends DoorGapCollection<HorizontalGap>
+		/* permits HorizontalGapCollectionImpl */ {
 
 	/** Assumes {@code baseGaps} is never modified after calling this constructor. */
 	static HorizontalGapCollection from(Collection<HorizontalGap> baseGaps) {

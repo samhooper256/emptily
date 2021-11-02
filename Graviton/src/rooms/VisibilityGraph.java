@@ -17,7 +17,9 @@ public class VisibilityGraph {
 	}
 	
 	/** Returns a {@link PointPath} connecting {@code start} and {@code dest} through this {@link VisibilityGraph}.
-	 * {@code start} and {@code dest} do not need to be in this graph.*/
+	 * {@code start} and {@code dest} do not need to be in this graph. The given points must be in the same coordinate
+	 * space as this graph - that is, where (0, 0) is the top-left of the {@link RoomLayout} this graph was created
+	 * from.*/
 	public PointPath path(Point2D source, Point2D dest) {
 		return new PathFinder(source, dest).find();
 	}
@@ -124,7 +126,6 @@ public class VisibilityGraph {
 		
 	}
 	
-	
 	public boolean contains(Point2D point) {
 		return adj.containsKey(point);
 	}
@@ -151,12 +152,23 @@ public class VisibilityGraph {
 			points.add(new Point2D(r.lrx() + cornerDist, r.lry() + cornerDist));
 		}
 		removePointsThatIntersectRectangles(points, room);
+		removePointsThatAreOutsideRoom(points, room);
 		consolidatePoints(points, cornerDist);
 		return points;
 	}
 	
 	private static void removePointsThatIntersectRectangles(Set<Point2D> points, RoomLayout room) {
 		points.removeIf(p -> room.containsInRect(p));
+	}
+	
+	private static void removePointsThatAreOutsideRoom(Set<Point2D> points, RoomLayout room) {
+//		System.out.printf("FILTERING points=%s%n", points);
+		points.removeIf(p -> {
+			boolean shouldRemove = !room.containsWithinInterior(p);
+//			if(shouldRemove)
+//				System.out.printf("\tFiltered %s%n", p);
+			return shouldRemove;
+		});
 	}
 	
 	private static void consolidatePoints(Set<Point2D> points, double minDistance) {
@@ -180,7 +192,7 @@ public class VisibilityGraph {
 	 * The coordinates of the endpoints of all lines in the returned set are shifted by
 	 * {@code shiftX} and {@code shiftY}.*/
 	public static Set<Line> lineSet(Set<Point2D> points, RoomLayout layout, double shiftX, double shiftY) {
-		System.out.printf("[enter] lineSet(points=%s)%n", points);
+//		System.out.printf("[enter] lineSet(points=%s)%n", points);
 		Set<Line> lines = new HashSet<>();
 		for(Point2D a : points)
 			for(Point2D b : points)
@@ -193,6 +205,10 @@ public class VisibilityGraph {
 	 * For example, a point of (0, 0) would represent the top left of the given room.*/
 	public static Set<Line> lineSet(Set<Point2D> points, RoomLayout layout) {
 		return lineSet(points, layout, 0, 0);
+	}
+	
+	public Map<Point2D, Set<Point2D>> adj() {
+		return adj;
 	}
 	
 }

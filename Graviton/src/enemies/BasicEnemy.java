@@ -105,7 +105,8 @@ public class BasicEnemy extends Rectangle implements HittableEnemy, DelayUpdatab
 	
 	private void createNewPath() {
 		VisibilityGraph graph = info.visibilityGraph(CORNER_DIST);
-		path = graph.path(enemy, player);
+		path = graph.path(enemy.subtract(info.tlx(), info.tly()), player.subtract(info.tlx(), info.tly()))
+				.shifted(info.tlx(), info.tly());
 		pathIndex = 0;
 		nsSinceLastPath = 0;
 	}

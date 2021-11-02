@@ -36,15 +36,38 @@ public enum Floor {
 	SECOND(7, List.of(
 			RoomLayout.builder()
 			.setSize(400, 400)
-			.setGaps(leftGap(100, 400), rightGap(100, 400), topGap(100, 400), bottomGap(100, 400))
-			.addBasicSpawn(20, 20)
+			.setGaps(leftGap(100, 400), rightGap(100, 400), /*topGap(100, 400),*/ bottomGap(100, 400))
+			.addBasicSpawnCentered(25, 25)
+			.addBasicSpawnCentered(375, 375)
 			.setPlayerSpawn(200, 200)
 			.build(),
 			RoomLayout.builder()
-			.setSize(800, 800)
-			.setGaps(leftGap(100, 800), rightGap(100, 800), topGap(100, 800), bottomGap(100, 800))
-			.addBasicSpawn(20, 20)
-			.setPlayerSpawn(400, 200)
+			.setSize(600, 600)
+			.setRects(RectangleLayout.centered(150, 150, 150, 150), RectangleLayout.centered(450, 150, 150, 150),
+					RectangleLayout.centered(150, 450, 150, 150), RectangleLayout.centered(450, 450, 150, 150))
+			.setGaps(leftGap(100, 600), rightGap(100, 600))
+			.addBasicSpawnCentered(300, 25)
+			.addBasicSpawnCentered(300, 75)
+			.addBasicSpawnCentered(300, 575)
+			.addBasicSpawnCentered(300, 525)
+			.setPlayerSpawn(300, 300)
+			.build(),
+			RoomLayout.builder()
+			.setSize(400, 600)
+			.setRects(RectangleLayout.centered(112.5, 125, 75, 250), RectangleLayout.centered(287.5, 125, 75, 250),
+					RectangleLayout.centered(112.5, 475, 75, 250), RectangleLayout.centered(287.5, 475, 75, 250))
+			.addBasicSpawnsCentered(
+					25, 25,
+					25, 75,
+					375, 25,
+					375, 75,
+					25, 575,
+					25, 525,
+					375, 575,
+					375, 525
+			)
+			.setPlayerSpawn(200, 300)
+			.setGaps(topGap(100, 400), bottomGap(100, 400))
 			.build()
 	)),
 	THIRD(10, List.of(
@@ -96,7 +119,6 @@ public enum Floor {
 	));
 	
 	public static final List<Floor> ORDER = List.of(Floor.FIRST, Floor.SECOND, Floor.THIRD);
-//	public static final List<Floor> ORDER = List.of(Floor.FIRST);
 	
 	private static final double INTERIOR_CUT = RoomLayout.DEFAULT_BORDER_THICKNESS * 2;
 

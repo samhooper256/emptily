@@ -4,8 +4,8 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Iterator;
 
-public sealed interface DoorGapCollection<T extends DoorGap> extends Iterable<T>
-	permits ArbitraryDoorGapCollection, HorizontalGapCollection, VerticalGapCollection {
+public interface DoorGapCollection<T extends DoorGap> extends Iterable<T>
+	/* permits ArbitraryDoorGapCollection, HorizontalGapCollection, VerticalGapCollection */ {
 	
 	/** The given {@link Collection} is defensively copied; changes to the given collection will not be reflected in
 	 * this {@link DoorGapCollection} or vice versa.*/

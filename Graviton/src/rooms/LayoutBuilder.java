@@ -58,6 +58,14 @@ public final class LayoutBuilder {
 		return this;
 	}
 	
+	public LayoutBuilder addBasicSpawnsCentered(double... xyPairs) {
+		if(xyPairs.length % 2 != 0)
+			throw new IllegalArgumentException("Array must have even length");
+		for(int i = 0; i < xyPairs.length; i += 2)
+			addBasicSpawnCentered(xyPairs[i], xyPairs[i + 1]);
+		return this;
+	}
+	
 	private List<EnemySpawn> spawnList() {
 		if(spawns == null)
 			spawns = new ArrayList<>();

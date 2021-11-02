@@ -118,4 +118,8 @@ public class MainPane extends StackPane implements DelayUpdatable {
 		Main.scene().levelComplete(levelIndex);
 	}
 	
+	public int level() {
+		return levelIndex + 1;
+	}
+	
 }

@@ -21,8 +21,8 @@ public final class Colls {
 	}
 
 	private static <T> T anyNonEmpty(Collection<? extends T> c) {
-		if(c instanceof List<? extends T> l)
-			return l.get(0);
+		if(c instanceof List<?>)
+			return ((List<? extends T>) c).get(0);
 		else
 			return c.iterator().next();
 	}

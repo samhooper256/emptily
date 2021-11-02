@@ -6,6 +6,7 @@ import base.DelayUpdatable;
 import base.Main;
 import base.game.content.Intersections;
 import enemies.Enemy;
+import floors.Floor;
 import fxutils.*;
 import javafx.animation.*;
 import javafx.animation.Animation.Status;
@@ -29,7 +30,7 @@ public class Player extends StackPane implements DelayUpdatable {
 	
 	private final StackPane color;
 	private final Timeline introTimeline;
-	private final Circle introCircle1, introCircle2;
+	private final Circle[] introCircles;
 	private final SimpleDoubleProperty introFrac;
 	
 	private GravityMode mode;
@@ -51,10 +52,11 @@ public class Player extends StackPane implements DelayUpdatable {
 		getChildren().addAll(color);
 		introStarted = false;
 		setVisible(false);
-		introCircle1 = new Circle(0, 0, 4);
-		introCircle1.setFill(PLAYER_COLOR);
-		introCircle2 = new Circle(0, 0, 4);
-		introCircle2.setFill(PLAYER_COLOR);
+		introCircles = new Circle[Floor.count()];
+		for(int i = 0; i < introCircles.length; i++) {
+			introCircles[i] = new Circle(0, 0, 4);
+			introCircles[i].setFill(Color.BLUE);
+		}
 		introFrac = new SimpleDoubleProperty();
 		introFrac.addListener((x, ov, nv) -> {
 			double frac = nv.doubleValue();
@@ -62,26 +64,28 @@ public class Player extends StackPane implements DelayUpdatable {
 		});
 		introTimeline = new Timeline();
 		introTimeline.getKeyFrames().add(new KeyFrame(Duration.ZERO, new KeyValue(this.opacityProperty(), 0)));
-		introTimeline.getKeyFrames().add(new KeyFrame(Duration.ZERO, new KeyValue(introCircle1.opacityProperty(), 1)));
-		introTimeline.getKeyFrames().add(new KeyFrame(Duration.ZERO, new KeyValue(introCircle2.opacityProperty(), 1)));
 		introTimeline.getKeyFrames().add(new KeyFrame(Duration.ZERO, new KeyValue(introFrac, 0)));
 		introTimeline.getKeyFrames().add(new KeyFrame(Duration.millis(1000), new KeyValue(this.opacityProperty(), 1)));
-		introTimeline.getKeyFrames().add(new KeyFrame(Duration.millis(800), new KeyValue(introCircle1.opacityProperty(), 0)));
-		introTimeline.getKeyFrames().add(new KeyFrame(Duration.millis(800), new KeyValue(introCircle2.opacityProperty(), 0)));
 		introTimeline.getKeyFrames().add(new KeyFrame(Duration.millis(1000), new KeyValue(introFrac, 1)));
 		
 	}
 	
 	private void animateIntro(double frac) {
-		double ang1 = frac * 2 * Math.PI - Math.PI / 2;
-		double ang2 = ang1 + Math.PI;
+		int level = Main.pane().level();
+		double angspacing = 2 * Math.PI / level;
+		double[] ang = new double[level];
+		ang[0] = frac * 2 * Math.PI - Math.PI / 2;
+		for(int i = 1; i < ang.length; i++)
+			ang[i] = ang[i - 1] + angspacing;
 		double pcx = getLayoutX() + width() / 2, pcy = getLayoutY() + height() / 2;
 		double radius = INTRO_RADIUS * (1 - frac);
-		double c1cx = Math.cos(ang1) * radius + pcx, c1cy = Math.sin(ang1) * radius + pcy;
-		double c2cx = Math.cos(ang2) * radius + pcx, c2cy = Math.sin(ang2) * radius + pcy;
-		
-		Nodes.setLayout(introCircle1, c1cx, c1cy);
-		Nodes.setLayout(introCircle2, c2cx, c2cy);
+		for(int i = 0; i < level; i++) {
+			double ccx = Math.cos(ang[i]) * radius + pcx;
+			double ccy = Math.sin(ang[i]) * radius + pcy;
+			Nodes.setLayout(introCircles[i], ccx, ccy);
+		}
+		for(int i = 0; i < level; i++)
+			introCircles[i].setOpacity(1 - frac);
 	}
 	
 	@Override
@@ -90,6 +94,8 @@ public class Player extends StackPane implements DelayUpdatable {
 			introStarted = true;
 			setOpacity(0);
 			setVisible(true);
+			for(int i = 0; i < introCircles.length; i++)
+				introCircles[i].setOpacity(0);
 			introTimeline.playFromStart();
 		}
 		else if(introTimeline.getStatus() != Status.RUNNING) {
@@ -171,13 +177,11 @@ public class Player extends StackPane implements DelayUpdatable {
 	
 	public void setX(double x) {
 		this.x = x;
-		introCircle1.setLayoutX(x);
 		setLayoutX(x);
 	}
 	
 	public void setY(double y) {
 		this.y = y;
-		introCircle1.setLayoutY(y);
 		setLayoutY(y);
 	}
 	
@@ -233,7 +237,7 @@ public class Player extends StackPane implements DelayUpdatable {
 	}
 	
 	public Node[] introNodes() {
-		return new Node[] {introCircle1, introCircle2};
+		return introCircles;
 	}
 	
 }

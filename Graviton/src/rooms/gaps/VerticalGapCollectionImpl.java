@@ -35,11 +35,11 @@ final class VerticalGapCollectionImpl implements VerticalGapCollection {
 
 	@Override
 	public List<VerticalGap> sorted(WallDirection direction) {
-		return switch(direction) {
-			case TOP_TO_BOTTOM -> Collections.unmodifiableList(sortedTB);
-			case BOTTOM_TO_TOP -> Collections.unmodifiableList(sortedBT);
-			default -> throw new IllegalArgumentException(String.format("Invalid direction: %s", direction));
-		};
+		switch(direction) {
+			case TOP_TO_BOTTOM: return Collections.unmodifiableList(sortedTB);
+			case BOTTOM_TO_TOP: return Collections.unmodifiableList(sortedBT);
+			default: throw new IllegalArgumentException(String.format("Invalid direction: %s", direction));
+		}
 	}
 
 	@Override

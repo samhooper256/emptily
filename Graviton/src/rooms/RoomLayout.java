@@ -28,6 +28,19 @@ public interface RoomLayout {
 		return DEFAULT_BORDER_THICKNESS;
 	}
 	
+	/** Assumes the given point is within the coordinate space of this {@link RoomLayout} (that is, (0, 0) is the top
+	 * left corner of this room).*/
+	default boolean containsWithinInterior(Point2D point) {
+		return containsWithinInterior(point.getX(), point.getY());
+	}
+	
+	/** Assumes the given point is within the coordinate space of this {@link RoomLayout} (that is, (0, 0) is the top
+	 * left corner of this room).*/
+	default boolean containsWithinInterior(double x, double y) {
+		return x > borderThickness() && x < borderThickness() + interiorWidth() &&
+				y > borderThickness() && y < borderThickness() + interiorHeight();
+	}
+	
 	double exteriorWidth();
 	
 	default double interiorWidth() {
@@ -45,12 +58,13 @@ public interface RoomLayout {
 	Collection<RectangleLayout> interiorRectsUnmodifiable();
 	
 	default DoorGapCollection<? extends DoorGap> gaps(Side side) {
-		return switch(side) {
-			case TOP -> topGaps();
-			case BOTTOM -> bottomGaps();
-			case LEFT -> leftGaps();
-			case RIGHT -> rightGaps();
-		};
+		switch(side) {
+			case TOP: return topGaps();
+			case BOTTOM: return bottomGaps();
+			case LEFT: return leftGaps();
+			case RIGHT: return rightGaps();
+			default: throw new UnsupportedOperationException(String.format("Unrecognized side: %s", side));
+		}
 	}
 	
 	HorizontalGapCollection topGaps();

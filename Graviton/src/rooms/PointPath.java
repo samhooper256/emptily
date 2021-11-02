@@ -31,4 +31,13 @@ public interface PointPath extends List<Point2D> {
 		}
 	}
 	
+	default PointPath shifted(double sx, double sy) {
+		Point2D[] points = new Point2D[size()];
+		for(int i = 0; i < size(); i++) {
+			Point2D p = get(i);
+			points[i] = new Point2D(p.getX() + sx, p.getY() + sy);
+		}
+		return withPoints(points);
+	}
+	
 }

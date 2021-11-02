@@ -30,11 +30,11 @@ final class HorizontalGapCollectionImpl implements HorizontalGapCollection {
 
 	@Override
 	public List<HorizontalGap> sorted(WallDirection direction) {
-		return switch(direction) {
-			case LEFT_TO_RIGHT -> Collections.unmodifiableList(sortedLR);
-			case RIGHT_TO_LEFT -> Collections.unmodifiableList(sortedRL);
-			default -> throw new IllegalArgumentException(String.format("Invalid direction: %s", direction));
-		};
+		switch(direction) {
+			case LEFT_TO_RIGHT: return Collections.unmodifiableList(sortedLR);
+			case RIGHT_TO_LEFT: return Collections.unmodifiableList(sortedRL);
+			default: throw new IllegalArgumentException(String.format("Invalid direction: %s", direction));
+		}
 	}
 
 	@Override
