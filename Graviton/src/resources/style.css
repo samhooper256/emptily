@@ -77,3 +77,16 @@
 	-fx-background-color: #e6e6e6;
 	-fx-background-radius: 12;
 }
+
+/* Hints */
+
+.shooting-hint,
+.movement-rules-hint {
+	-fx-border-radius: 8;
+	-fx-font: 18 "Georgia";
+	-fx-background-color: #bdbdff;
+	-fx-border-color: #5454ff;
+	-fx-border-width: 2;
+	-fx-background-radius: 8;
+	-fx-padding: 4;
+}

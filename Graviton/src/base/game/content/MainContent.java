@@ -24,17 +24,20 @@ public class MainContent extends Pane implements DelayUpdatable {
 	/** The room that fully encloses the player, or {@code null} if there is no such room. */
 	private RoomInfo currentRoom;
 	private FloorPlan floorPlan;
-	private final Player player;
 	
+	private final Player player;
+	private final HintManager hintManager;
 	private final Collection<Platform> platforms;
 	private final Set<Enemy> enemies;
 	private final Map<RoomInfo, Collection<Door>> doorMap;
 	private final Set<RoomInfo> shownRooms;
 	private final Set<HallwayInfo> shownHallways;
 	private final Set<Node> removeRequests, addRequests;
+	private final List<Runnable> endPulseRequests;
 	
 	public MainContent() {
 		player = new Player();
+		hintManager = new HintManager(this);
 		platforms = new ArrayList<>();
 		enemies = new HashSet<>();
 		doorMap = new HashMap<>();
@@ -42,6 +45,7 @@ public class MainContent extends Pane implements DelayUpdatable {
 		shownHallways = new HashSet<>();
 		removeRequests = new HashSet<>();
 		addRequests = new HashSet<>();
+		endPulseRequests = new ArrayList<>();
 	}
 	
 	public void startLevel(int levelIndex) {
@@ -160,6 +164,7 @@ public class MainContent extends Pane implements DelayUpdatable {
 	public void keyPressed(KeyCode code) {
 		if(KeyInput.isModeCode(code))
 			player.setMode(KeyInput.modeFor(code));
+		hintManager.keyPressed(code);
 	}
 	
 	public void leftClicked(Point2D point) {
@@ -168,6 +173,7 @@ public class MainContent extends Pane implements DelayUpdatable {
 		double ydist = point.getY() - playerCenter.getY();
 		double angdeg = Math.toDegrees(Math.atan2(ydist, xdist));
 		getChildren().add(new LineBullet(playerCenter.getX(), playerCenter.getY(), angdeg));
+		hintManager.leftClicked();
 	}
 	
 	@Override
@@ -176,6 +182,8 @@ public class MainContent extends Pane implements DelayUpdatable {
 		for(Node n : getChildren())
 			if(n != player && n instanceof DelayUpdatable)
 				((DelayUpdatable) n).update(nsSinceLastFrame);
+
+		hintManager.update(nsSinceLastFrame);
 		
 		for(Node n : removeRequests) {
 			boolean result = getChildren().remove(n);
@@ -187,6 +195,11 @@ public class MainContent extends Pane implements DelayUpdatable {
 		for(Node n : addRequests)
 			getChildren().add(n);
 		addRequests.clear();
+		
+		for(Runnable r : endPulseRequests)
+			r.run();
+		endPulseRequests.clear();
+		
 	}
 	
 	public void updateCurrentRoom() {
@@ -201,6 +214,12 @@ public class MainContent extends Pane implements DelayUpdatable {
 
 	public boolean requestAdd(Node node) {
 		return addRequests.add(node);
+	}
+	
+	/** Performs the given action at the end of the current {@link #update(long)} pulse. These actions are performed after
+	 * any {@link #requestAdd(Node) add requests}. */
+	public boolean requestEnd(Runnable r) {
+		return endPulseRequests.add(r);
 	}
 	
 	public FloorPlan floorPlan() {

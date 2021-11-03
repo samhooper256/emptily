@@ -106,7 +106,7 @@ public class Player extends StackPane implements DelayUpdatable {
 	private void updateIfNotInIntro(long nsSinceLastFrame) {
 		double sec = nsSinceLastFrame / 1e9;
 		double oldX = x, oldY = y;
-		double xaccel = mode.xAccel(), yaccel = mode.yAccel();
+		double xaccel = mode == null ? 0 : mode.xAccel(), yaccel = mode == null ? 0 : mode.yAccel();
 		if(vincible()) {
 			Enemy enemy = Intersections.getEnemyIntersectingPlayer();
 			if(enemy != null)
@@ -194,7 +194,7 @@ public class Player extends StackPane implements DelayUpdatable {
 		setY(y);
 		introTimeline.stop();
 		introStarted = false;
-		mode = GravityMode.DOWN;
+		mode = null;
 	}
 	
 	public double width() {
@@ -206,7 +206,15 @@ public class Player extends StackPane implements DelayUpdatable {
 	}
 	
 	public Point2D center() {
-		return new Point2D(x() + width() / 2, y() + height() / 2);
+		return new Point2D(centerX(), centerY());
+	}
+
+	public double centerX() {
+		return x() + width() / 2;
+	}
+	
+	public double centerY() {
+		return y() + height() / 2;
 	}
 	
 	public int hp() {

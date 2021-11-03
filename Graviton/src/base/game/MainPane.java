@@ -122,4 +122,8 @@ public class MainPane extends StackPane implements DelayUpdatable {
 		return levelIndex + 1;
 	}
 	
+	public boolean isFighting() {
+		return isFighting;
+	}
+	
 }
