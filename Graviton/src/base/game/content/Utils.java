@@ -76,16 +76,20 @@ final class Utils {
 	}
 	
 	public static Collection<Platform> getHallwayPlatforms(HallwayInfo hi) {
+		return getHallwayPlatforms(hi, false);
+	}
+	
+	public static Collection<Platform> getHallwayPlatforms(HallwayInfo hi, boolean bordered) {
 		Collection<Platform> platforms = new ArrayList<>();
 		HallwayLayout hl = hi.layout();
 		double tlx = hi.tlx(), tly = hi.tly();
 		if(hl.isVertical()) {
-			platforms.add(new Platform(tlx, tly, hl.wallWidth(), hl.length()));
-			platforms.add(new Platform(tlx + hl.wallWidth() + hl.girth(), tly, hl.wallWidth(), hl.length()));
+			platforms.add(new Platform(tlx, tly, hl.wallWidth(), hl.length(), bordered));
+			platforms.add(new Platform(tlx + hl.wallWidth() + hl.girth(), tly, hl.wallWidth(), hl.length(), bordered));
 		}
 		else {
-			platforms.add(new Platform(tlx, tly, hl.length(), hl.wallWidth()));
-			platforms.add(new Platform(tlx, tly + hl.wallWidth() + hl.girth(), hl.length(), hl.wallWidth()));
+			platforms.add(new Platform(tlx, tly, hl.length(), hl.wallWidth(), bordered));
+			platforms.add(new Platform(tlx, tly + hl.wallWidth() + hl.girth(), hl.length(), hl.wallWidth(), bordered));
 		}
 		return platforms;
 	}

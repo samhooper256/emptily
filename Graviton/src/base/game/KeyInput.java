@@ -4,6 +4,8 @@ import javafx.scene.input.KeyCode;
 
 public final class KeyInput {
 	
+	private static final KeyCode ZOOM_CODE = KeyCode.CONTROL;
+	
 	private KeyInput() {
 		
 	}
@@ -29,6 +31,10 @@ public final class KeyInput {
 			return GravityMode.LEFT;
 		throw new IllegalArgumentException(String.format("The given KeyCode does not map to a "
 				+ "GravityMode. code=%s", code));
+	}
+	
+	public static KeyCode zoomCode() {
+		return ZOOM_CODE;
 	}
 	
 }

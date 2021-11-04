@@ -1,5 +1,6 @@
-package base;
+package base.mainmenu;
 
+import base.Main;
 import javafx.geometry.Pos;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
@@ -12,9 +13,10 @@ public class MainMenu extends StackPane {
 			TITLE_CSS = "main-menu-title",
 			PLAY_BUTTON_CSS = "main-menu-play";
 	
-	private final VBox vBox;
+	private final VBox vBox, buttonBox;
 	private final Label title;
 	private final Button play;
+	private final ControlsButton controlsButton;
 	
 	public MainMenu() {
 		vBox = new VBox();
@@ -27,7 +29,12 @@ public class MainMenu extends StackPane {
 		play.getStyleClass().add(PLAY_BUTTON_CSS);
 		play.setOnAction(eh -> playButtonAction());
 		
-		vBox.getChildren().addAll(title, play);
+		controlsButton = new ControlsButton();
+		
+		buttonBox = new VBox(12, play, controlsButton);
+		buttonBox.setAlignment(Pos.TOP_CENTER);
+		vBox.getChildren().addAll(title, buttonBox);
+		
 		
 		getChildren().add(vBox);
 	}

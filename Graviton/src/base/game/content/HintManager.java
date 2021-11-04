@@ -67,4 +67,5 @@ final class HintManager implements DelayUpdatable {
 	void reset() {
 		canShowMovementRules = true;
 	}
+	
 }

@@ -9,6 +9,15 @@
 	-fx-background-radius: 12;	
 }
 
+.controls-button {
+	-fx-background-color: orange;
+	-fx-background-radius: 12;
+}
+
+.controls-button-label {
+	-fx-font: bold 48 "Courier New";
+}
+
 .main-menu-play:hover {
 	-fx-background-color: #ffba66;
 }
@@ -80,8 +89,7 @@
 
 /* Hints */
 
-.shooting-hint,
-.movement-rules-hint {
+.basic-text-hint {
 	-fx-border-radius: 8;
 	-fx-font: 18 "Georgia";
 	-fx-background-color: #bdbdff;

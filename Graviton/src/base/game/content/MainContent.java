@@ -30,7 +30,7 @@ public class MainContent extends Pane implements DelayUpdatable {
 	private final Collection<Platform> platforms;
 	private final Set<Enemy> enemies;
 	private final Map<RoomInfo, Collection<Door>> doorMap;
-	private final Set<RoomInfo> shownRooms;
+	private final Map<RoomInfo, Collection<Platform>> roomMap; //every key in this map is a shown room.
 	private final Set<HallwayInfo> shownHallways;
 	private final Set<Node> removeRequests, addRequests;
 	private final List<Runnable> endPulseRequests;
@@ -41,7 +41,7 @@ public class MainContent extends Pane implements DelayUpdatable {
 		platforms = new ArrayList<>();
 		enemies = new HashSet<>();
 		doorMap = new HashMap<>();
-		shownRooms = new HashSet<>();
+		roomMap = new HashMap<>();
 		shownHallways = new HashSet<>();
 		removeRequests = new HashSet<>();
 		addRequests = new HashSet<>();
@@ -53,8 +53,11 @@ public class MainContent extends Pane implements DelayUpdatable {
 		Floor floor = Floor.ORDER.get(levelIndex);
 		floorPlan = new FloorPlanBuilder(floor.layouts(), floor.suggestedRoomCount(), 180).build();
 		currentRoom = floorPlan.startingRoom();
-		showRoom(currentRoom);
-		showAdjacentRoomsAndHallways(currentRoom);
+		showRoom(currentRoom, false);
+		showAdjacentHallways(currentRoom);
+		for(RoomInfo ri : floorPlan.rooms())
+			if(ri != currentRoom)
+				showRoom(ri, true);
 		buildDoors();
 		getChildren().add(player);
 		getChildren().addAll(player.introNodes());
@@ -67,18 +70,19 @@ public class MainContent extends Pane implements DelayUpdatable {
 		platforms.clear();
 		enemies.clear();
 		doorMap.clear();
-		shownRooms.clear();
+		roomMap.clear();
 		shownHallways.clear();
 		addRequests.clear();
 		removeRequests.clear();
 	}
 	
-	public void addPlatform(Platform platform) {
-		getChildren().add(platform);
-		platforms.add(platform);
+	public void addPlatforms(Collection<? extends Platform> platforms) {
+		addPlatforms(platforms, false);
 	}
 	
-	public void addPlatforms(Collection<? extends Platform> platforms) {
+	public void addPlatforms(Collection<? extends Platform> platforms, boolean bordered) {
+		for(Platform p : platforms)
+			p.setBordered(bordered);
 		getChildren().addAll(platforms);
 		this.platforms.addAll(platforms);
 	}
@@ -87,30 +91,29 @@ public class MainContent extends Pane implements DelayUpdatable {
 		return platforms;
 	}
 	
-	public void showRoom(RoomInfo info) {
-		if(!shownRooms.contains(info)) {
-			shownRooms.add(info);
-			showLayoutAtCoordinates(info.layout(), info.tlx(), info.tly());
+	public void showRoom(RoomInfo info, boolean bordered) {
+		if(!shownRooms().contains(info)) {
+			Collection<Platform> platforms = showLayoutAtCoordinates(info.layout(), info.tlx(), info.tly(), bordered);
+			roomMap.put(info, platforms);
 		}
 	}
 	
-	private void showLayoutAtCoordinates(RoomLayout layout, double tlx, double tly) {
+	private Collection<Platform> showLayoutAtCoordinates(RoomLayout layout, double tlx, double tly, boolean bordered) {
 		Collection<Platform> roomPlatforms = Utils.getRoomPlatforms(layout, tlx, tly);
-		addPlatforms(roomPlatforms);
+		addPlatforms(roomPlatforms, bordered);
+		return roomPlatforms;
 	}
 	
-	public void showAdjacentRoomsAndHallways(RoomInfo ri) {
+	public void showAdjacentHallways(RoomInfo ri) {
 		for(HallwayInfo exit : floorPlan.exits(ri))
 			showHallway(exit);
-		for(RoomInfo adj : floorPlan.adjacentRooms(ri))
-			showRoom(adj);
 	}
 	
 	private void showHallway(HallwayInfo hi) {
 		if(shownHallways.contains(hi))
 			return;
 		shownHallways.add(hi);
-		addPlatforms(Utils.getHallwayPlatforms(hi));
+		addPlatforms(Utils.getHallwayPlatforms(hi, true), false);
 	}
 	
 	private void buildDoors() {
@@ -257,10 +260,12 @@ public class MainContent extends Pane implements DelayUpdatable {
 	}
 	
 	/** Locks the current room and spawns enemies in it. */
-	public void lockAndSpawn() {
+	public void lockSpawnAndFill() {
 		for(Door d : doorMap.get(currentRoom))
 			d.close();
 		spawnEnemies(currentRoom);
+		for(Platform p : roomMap.get(currentRoom))
+			p.setBordered(false);
 	}
 
 	public Collection<Enemy> enemies() {
@@ -269,6 +274,10 @@ public class MainContent extends Pane implements DelayUpdatable {
 	
 	public Stream<Door> doors() {
 		return doorMap.values().stream().flatMap(Collection::stream);
+	}
+	
+	public Set<RoomInfo> shownRooms() {
+		return roomMap.keySet();
 	}
 	
 }

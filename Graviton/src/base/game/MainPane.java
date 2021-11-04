@@ -15,7 +15,7 @@ public class MainPane extends StackPane implements DelayUpdatable {
 	private final MainContent content;
 	private final Set<RoomInfo> clearedRooms;
 	
-	private boolean isFighting;
+	private volatile boolean isFighting; //not sure if volatile is needed
 	private int roomsLeftToClear, levelIndex;
 	
 	MainPane() {
@@ -87,7 +87,7 @@ public class MainPane extends StackPane implements DelayUpdatable {
 	
 	private void startFighting() {
 		isFighting = true;
-		content().lockAndSpawn();
+		content().lockSpawnAndFill();
 	}
 
 	/** Assumes the given room is locked. Marks the given room as {@link #clearedRooms cleared}. */
@@ -96,7 +96,7 @@ public class MainPane extends StackPane implements DelayUpdatable {
 		Main.scene().stoppedFighting();
 		markCleared(ri);
 		content().unlock(ri);
-		content().showAdjacentRoomsAndHallways(ri);
+		content().showAdjacentHallways(ri);
 		if(!anyRoomsLeft())
 			levelComplete();
 	}

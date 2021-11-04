@@ -10,12 +10,18 @@ import javafx.application.*;
 import javafx.scene.image.Image;
 import javafx.stage.Stage;
 
+/*
+ * TODO: Make it so you can scroll in and out in zoom mode?
+ * TODO: Find some way to tell the user about the CTRL zoom feature.
+ */
 public class Main extends Application {
 	
 	private static final int HEALTH_ICON_SIZE = 32;
+	private static final int CONTROL_KEY_ICON_SIZE = 32;
 	public static final Image
 			FULL_HEALTH = Images.get("fullhealth.png", HEALTH_ICON_SIZE, HEALTH_ICON_SIZE, false, true),
-			EMPTY_HEALTH = Images.get("emptyhealth.png", HEALTH_ICON_SIZE, HEALTH_ICON_SIZE, false, true);
+			EMPTY_HEALTH = Images.get("emptyhealth.png", HEALTH_ICON_SIZE, HEALTH_ICON_SIZE, false, true),
+			W_IMAGE = Images.get("W.png", CONTROL_KEY_ICON_SIZE, CONTROL_KEY_ICON_SIZE, false, true);
 	
 	static final String RESOURCES_PREFIX = "/resources/";
 	

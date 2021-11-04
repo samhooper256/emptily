@@ -2,6 +2,7 @@ package base;
 
 import base.game.*;
 import base.game.popups.*;
+import base.mainmenu.MainMenu;
 import floors.Floor;
 import javafx.scene.*;
 import javafx.scene.input.*;
@@ -35,6 +36,7 @@ public class OuterScene extends Scene implements DelayUpdatable {
 		this.youWinPopup = new YouWinPopup();
 		this.pauseLayer = new PauseLayer(outerPane);
 		setOnKeyPressed(this::keyPressed);
+		setOnKeyReleased(this::keyReleased);
 		outerPane.getChildren().add(mainMenu);
 		mainScene.widthProperty().bind(widthProperty());
 		mainScene.heightProperty().bind(heightProperty());
@@ -52,6 +54,10 @@ public class OuterScene extends Scene implements DelayUpdatable {
 			else
 				mainScene.keyPressed(ke);
 		}
+	}
+	
+	private void keyReleased(KeyEvent ke) {
+		mainScene.keyReleased(ke);
 	}
 	
 	public MainScene mainScene() {
