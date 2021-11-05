@@ -44,6 +44,14 @@ public interface Enemy {
 	
 	Point2D center();
 	
+	default double centerX() {
+		return center().getX();
+	}
+	
+	default double centerY() {
+		return center().getY();
+	}
+	
 	double maxVelocity();
 	
 }

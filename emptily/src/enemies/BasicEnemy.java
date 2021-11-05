@@ -36,9 +36,19 @@ public class BasicEnemy extends AbstractEnemy implements HittableEnemy, DelayUpd
 	
 	@Override
 	public Point2D center() {
-		return new Point2D(x() + SIZE / 2, y() + SIZE / 2);
+		return new Point2D(centerX(), centerY());
+	}
+
+	@Override
+	public double centerX() {
+		return x() + SIZE / 2;
 	}
 	
+	@Override
+	public double centerY() {
+		return y() + SIZE / 2;
+	}
+
 	@Override
 	public double xvel() {
 		return xvel;

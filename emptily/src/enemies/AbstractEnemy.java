@@ -27,6 +27,6 @@ abstract class AbstractEnemy extends StackPane implements HittableEnemy {
 	/** An action to be run when this {@link Enemy} dies. */
 	protected void onDeath() {
 		Main.content().requestRemove(this);
-		Main.content().addBurst(new CircleBurst(Color.RED, 20), x(), y());
+		Main.content().addBurst(new CircleBurst(Color.RED, 20), centerX(), centerY());
 	}
 }

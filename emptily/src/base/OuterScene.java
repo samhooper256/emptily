@@ -7,7 +7,6 @@ import floors.Floor;
 import javafx.scene.*;
 import javafx.scene.input.*;
 import javafx.scene.layout.StackPane;
-import javafx.scene.paint.Color;
 
 public class OuterScene extends Scene implements DelayUpdatable {
 
