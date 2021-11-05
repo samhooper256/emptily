@@ -2,11 +2,12 @@ package base;
 
 import base.game.*;
 import base.game.popups.*;
-import base.mainmenu.MainMenu;
+import base.mainmenu.*;
 import floors.Floor;
 import javafx.scene.*;
 import javafx.scene.input.*;
 import javafx.scene.layout.StackPane;
+import javafx.scene.paint.Color;
 
 public class OuterScene extends Scene implements DelayUpdatable {
 
@@ -20,6 +21,7 @@ public class OuterScene extends Scene implements DelayUpdatable {
 	private final DeathPopup deathPopup;
 	private final YouWinPopup youWinPopup;
 	private final PauseLayer pauseLayer;
+	private final OverlayLayer overlayLayer;
 	
 	public OuterScene() {
 		this(new StackPane(), DEFAULT_WIDTH, DEFAULT_HEIGHT);
@@ -35,8 +37,10 @@ public class OuterScene extends Scene implements DelayUpdatable {
 		this.deathPopup = new DeathPopup();
 		this.youWinPopup = new YouWinPopup();
 		this.pauseLayer = new PauseLayer(outerPane);
+		overlayLayer = new OverlayLayer();
 		setOnKeyPressed(this::keyPressed);
 		setOnKeyReleased(this::keyReleased);
+		setOnMouseClicked(this::mouseClicked);
 		outerPane.getChildren().add(mainMenu);
 		mainScene.widthProperty().bind(widthProperty());
 		mainScene.heightProperty().bind(heightProperty());
@@ -58,6 +62,11 @@ public class OuterScene extends Scene implements DelayUpdatable {
 	
 	private void keyReleased(KeyEvent ke) {
 		mainScene.keyReleased(ke);
+	}
+	
+	private void mouseClicked(MouseEvent me) {
+		if(isShowingMainScene() && mainScene.isZoomedOut() && me.getButton() == MouseButton.PRIMARY)
+			overlayLayer.showNSWZO();
 	}
 	
 	public MainScene mainScene() {
@@ -95,8 +104,8 @@ public class OuterScene extends Scene implements DelayUpdatable {
 	/** Hides the currently showing popup, if there is one. */
 	public void hidePopup() {
 		if(isShowingPopup()) {
-			EndingPopup popup = (EndingPopup) outerPane.getChildren().get(2);
-			outerPane.getChildren().remove(2);
+			EndingPopup popup = (EndingPopup) outerPane.getChildren().get(3);
+			outerPane.getChildren().remove(3);
 			popup.setVisible(false);
 		}
 	}
@@ -117,14 +126,14 @@ public class OuterScene extends Scene implements DelayUpdatable {
 	
 	private void switchToMainScene() {
 		outerPane.getChildren().clear();
-		outerPane.getChildren().add(mainScene);
-		outerPane.getChildren().add(healthBar);
+		outerPane.getChildren().addAll(mainScene, healthBar, overlayLayer);
 	}
 	
 	public void switchToMainMenu() {
 		outerPane.getChildren().clear();
 		pauseLayer.setVisible(false);
 		outerPane.getChildren().add(mainMenu);
+		mainMenu.animateIn(); //Title is invisible if I remove this line... idk why
 	}
 	
 	private void showPopup(EndingPopup popup) {
@@ -138,7 +147,7 @@ public class OuterScene extends Scene implements DelayUpdatable {
 	}
 	
 	public boolean isShowingPopup() {
-		return outerPane.getChildren().size()  == 3 && outerPane.getChildren().get(2) instanceof EndingPopup;
+		return outerPane.getChildren().size() == 4 && outerPane.getChildren().get(3) instanceof EndingPopup;
 	}
 	
 	public boolean isPaused() {
@@ -157,6 +166,16 @@ public class OuterScene extends Scene implements DelayUpdatable {
 	
 	public void unpause() {
 		pauseLayer.animateOut();
+	}
+	
+	/** Assumes {@link #isShowingMainScene() the main scene is showing} and it is no longer
+	 * {@link MainScene#isZoomedOut() zoomed out}.*/
+	public void stoppedZooming() {
+		overlayLayer.hideNSWZO();
+	}
+	
+	public MainMenu mainMenu() {
+		return mainMenu;
 	}
 	
 }

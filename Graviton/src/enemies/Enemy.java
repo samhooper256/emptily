@@ -1,6 +1,6 @@
 package enemies;
 
-import javafx.geometry.Bounds;
+import javafx.geometry.*;
 import javafx.scene.Node;
 
 /** All concrete classes that implement {@link Enemy} must be a subclass of {@link Node}. Implementing
@@ -33,5 +33,17 @@ public interface Enemy {
 	default Node asNode() {
 		return (Node) this;
 	}
+	
+	double xvel();
+	
+	double yvel();
+	
+	void setxvel(double xvel);
+	
+	void setyvel(double yvel);
+	
+	Point2D center();
+	
+	double maxVelocity();
 	
 }

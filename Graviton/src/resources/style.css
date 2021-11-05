@@ -1,6 +1,6 @@
-.main-menu-title {
+.title-character {
 	-fx-font: bold 72 "Courier New";
-	-fx-text-fill: blue;
+	-fx-text-fill: transparent;
 }
 
 .main-menu-play {
@@ -14,8 +14,16 @@
 	-fx-background-radius: 12;
 }
 
+.controls-button:highlight {
+	-fx-background-color: #ffba66;
+}
+
 .controls-button-label {
 	-fx-font: bold 48 "Courier New";
+}
+
+.control-item-label {
+	-fx-font: bold 14 "Courier New";
 }
 
 .main-menu-play:hover {
@@ -97,4 +105,10 @@
 	-fx-border-width: 2;
 	-fx-background-radius: 8;
 	-fx-padding: 4;
+}
+
+/** Overlays */
+.nswz-overlay {
+	-fx-font: bold 24 "Courier New";	
+	-fx-text-fill: red;
 }

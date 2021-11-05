@@ -1,4 +1,4 @@
-module relearn {
+module emptily {
 	
 	requires transitive javafx.graphics;
 	requires transitive javafx.controls;
@@ -8,6 +8,7 @@ module relearn {
 	exports base;
 	exports base.game;
 	exports base.game.content;
+	exports base.mainmenu;
 	exports enemies;
 	exports rooms;
 	exports rooms.gaps;

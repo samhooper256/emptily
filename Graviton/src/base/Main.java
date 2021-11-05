@@ -16,12 +16,21 @@ import javafx.stage.Stage;
  */
 public class Main extends Application {
 	
-	private static final int HEALTH_ICON_SIZE = 32;
-	private static final int CONTROL_KEY_ICON_SIZE = 32;
+	private static final int
+			HEALTH_ICON_SIZE = 32,
+			MOVEMENT_KEY_ICON_SIZE = 32,
+			CTRL_ICON_WIDTH = 48,
+			CTRL_ICON_HEIGHT = 32;
+			
 	public static final Image
 			FULL_HEALTH = Images.get("fullhealth.png", HEALTH_ICON_SIZE, HEALTH_ICON_SIZE, false, true),
 			EMPTY_HEALTH = Images.get("emptyhealth.png", HEALTH_ICON_SIZE, HEALTH_ICON_SIZE, false, true),
-			W_IMAGE = Images.get("W.png", CONTROL_KEY_ICON_SIZE, CONTROL_KEY_ICON_SIZE, false, true);
+			W_IMAGE = Images.get("W.png", MOVEMENT_KEY_ICON_SIZE, MOVEMENT_KEY_ICON_SIZE, false, true),
+			A_IMAGE = Images.get("A.png", MOVEMENT_KEY_ICON_SIZE, MOVEMENT_KEY_ICON_SIZE, false, true),
+			S_IMAGE = Images.get("S.png", MOVEMENT_KEY_ICON_SIZE, MOVEMENT_KEY_ICON_SIZE, false, true),
+			D_IMAGE = Images.get("D.png", MOVEMENT_KEY_ICON_SIZE, MOVEMENT_KEY_ICON_SIZE, false, true),
+			CLICK_IMAGE = Images.get("click.png", MOVEMENT_KEY_ICON_SIZE, MOVEMENT_KEY_ICON_SIZE, false, true),
+			CTRL_IMAGE = Images.get("CTRL.png", CTRL_ICON_WIDTH, CTRL_ICON_HEIGHT, false, true);
 	
 	static final String RESOURCES_PREFIX = "/resources/";
 	
@@ -42,12 +51,11 @@ public class Main extends Application {
 		
 		stage.setMaximized(true);
 		stage.show();
+		
+		outerScene().mainMenu().animateIn();
 	}
 	
-	static int times = 0;
 	public static void update(long nsSinceLastFrame) {
-//		if(nsSinceLastFrame > 20_000_000)
-//			System.out.println(++times);
 		outerScene.update(nsSinceLastFrame);
 	}
 

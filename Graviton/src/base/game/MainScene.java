@@ -50,9 +50,14 @@ public class MainScene extends SubScene implements DelayUpdatable {
 	
 	public void keyReleased(KeyEvent ke) {
 		if(ke.getCode() == KeyInput.zoomCode()) {
-			zoomedOut = false;
-			camera.setTranslateZ(CAMERA_NORMAL_Z);
+			stopZooming();
 		}
+	}
+
+	public void stopZooming() {
+		zoomedOut = false;
+		camera.setTranslateZ(CAMERA_NORMAL_Z);
+		Main.outerScene().stoppedZooming();
 	}
 	
 	private void mouseEvent(MouseEvent me) {
@@ -87,7 +92,7 @@ public class MainScene extends SubScene implements DelayUpdatable {
 		Main.outerScene().levelComplete(levelIndex);
 	}
 	
-	boolean isZoomedOut() {
+	public boolean isZoomedOut() {
 		return zoomedOut;
 	}
 	
