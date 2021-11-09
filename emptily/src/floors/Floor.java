@@ -126,10 +126,10 @@ public enum Floor {
 			.build(),
 			RoomLayout.builder()
 			.setSize(800, 400)
-			.setRects(RectangleLayout.of(50, 40, 40, 320), RectangleLayout.of(710, 40, 40, 320))
+			.setRects(RectangleLayout.of(50, 50, 40, 300), RectangleLayout.of(710, 50, 40, 300))
 			.setGaps(topGap(100, 800), bottomGap(100, 800))
-			.addCannonCentered(25, 200)
-			.addCannonCentered(775, 200)
+			.addCannonCentered(26, 200)
+			.addCannonCentered(774, 200)
 			.setPlayerSpawn(400, 150)
 			.build(),
 			RoomLayout.builder()

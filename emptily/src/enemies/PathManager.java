@@ -108,4 +108,16 @@ abstract class PathManager implements DelayUpdatable {
 		return enemy.center().distance(Main.content().player().center());
 	}
 	
+	/** Returns the angle, in radians, of the {@link Enemy Enemy's} velocity vector after the most recent
+	 * {@link #update(long)} call.*/
+	public double angradOfVelocity() {
+		return Math.atan2(enemy.yvel(), enemy.xvel());
+	}
+	
+	public double angradToPlayer() {
+//		return Math.atan2(enemy.centerY() - Main.content().player().centerY(),
+//				enemy.centerX() - Main.content().player().centerX());
+		return Math.atan2(Main.content().player().centerY() - enemy.centerY() ,
+				Main.content().player().centerX() - enemy.centerX());
+	}
 }

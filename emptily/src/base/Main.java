@@ -14,6 +14,8 @@ import javafx.stage.Stage;
  * TODO: make Cannons have a bigger death burst?
  * TODO: make Cannonballs have a much smaller (or nonexistent) death burst.
  * TODO: redesign levels to add more rooms and Cannons.
+ * TODO: fix bug where the shooting hint doesn't show text.
+ * TODO: cannons are buggy around corners.
  */
 public class Main extends Application {
 	

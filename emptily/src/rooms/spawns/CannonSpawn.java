@@ -9,7 +9,7 @@ public class CannonSpawn extends AbstractEnemySpawn<Cannon> {
 	}
 
 	public static CannonSpawn centered(double centerX, double centerY) {
-		return new CannonSpawn(centerX - Cannon.SIZE / 2, centerY - Cannon.SIZE / 2);
+		return new CannonSpawn(centerX - Cannon.OUTER_SIZE / 2, centerY - Cannon.OUTER_SIZE / 2);
 	}
 	
 }
