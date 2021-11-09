@@ -4,6 +4,7 @@ import java.util.*;
 
 import rooms.gaps.DoorGap;
 import rooms.spawns.*;
+import utils.DoubleBiConsumer;
 
 public final class LayoutBuilder {
 
@@ -48,21 +49,39 @@ public final class LayoutBuilder {
 		return this;
 	}
 	
-	public LayoutBuilder addBasicSpawn(double relX, double relY) {
+	public LayoutBuilder addBasicEnemy(double relX, double relY) {
 		spawnList().add(new BasicEnemySpawn(relX, relY));
 		return this;
 	}
 	
-	public LayoutBuilder addBasicSpawnCentered(double centerX, double centerY) {
+	public LayoutBuilder addBasicEnemyCentered(double centerX, double centerY) {
 		spawnList().add(BasicEnemySpawn.centered(centerX, centerY));
 		return this;
 	}
 	
-	public LayoutBuilder addBasicSpawnsCentered(double... xyPairs) {
+	public LayoutBuilder addBasicEnemiesCentered(double... xyPairs) {
+		return addSpawnsCentered(this::addBasicEnemyCentered, xyPairs);
+	}
+	
+	public LayoutBuilder addCannon(double relX, double relY) {
+		spawnList().add(new CannonSpawn(relX, relY));
+		return this;
+	}
+	
+	public LayoutBuilder addCannonCentered(double centerX, double centerY) {
+		spawnList().add(CannonSpawn.centered(centerX, centerY));
+		return this;
+	}
+	
+	public LayoutBuilder addCannonsCentered(double... xyPairs) {
+		return addSpawnsCentered(this::addCannonCentered, xyPairs);
+	}
+	
+	private LayoutBuilder addSpawnsCentered(DoubleBiConsumer consumer, double... xyPairs) {
 		if(xyPairs.length % 2 != 0)
 			throw new IllegalArgumentException("Array must have even length");
 		for(int i = 0; i < xyPairs.length; i += 2)
-			addBasicSpawnCentered(xyPairs[i], xyPairs[i + 1]);
+			consumer.accept(xyPairs[i], xyPairs[i + 1]);
 		return this;
 	}
 	

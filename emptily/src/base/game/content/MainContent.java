@@ -195,8 +195,12 @@ public class MainContent extends Pane implements DelayUpdatable {
 		}
 		removeRequests.clear();
 		
-		for(Node n : addRequests)
-			getChildren().add(n);
+		for(Node n : addRequests) {
+			if(n instanceof Enemy)
+				addEnemy((Enemy) n);
+			else
+				getChildren().add(n);
+		}
 		addRequests.clear();
 		
 		for(Runnable r : endPulseRequests)

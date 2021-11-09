@@ -9,9 +9,9 @@ final class Movement {
 		
 	}
 	
-	public static void tickTowards(Enemy enemy, Point2D enemyCenter, Point2D dest, double maxVelocity,
-			long nsSinceLastFrame) {
+	public static void tickTowards(Enemy enemy, Point2D dest, double maxVelocity, long nsSinceLastFrame) {
 		double sec = nsSinceLastFrame / 1e9;
+		Point2D enemyCenter = enemy.center();
 		double xdist = dest.getX() - enemyCenter.getX();
 		double ydist = dest.getY() - enemyCenter.getY();
 		double angle = Math.atan2(ydist, xdist);
@@ -39,6 +39,12 @@ final class Movement {
 			enemy.setxvel(0);
 			enemy.setyvel(enemy.yvel() > 0 ? maxVelocity : -maxVelocity);
 		}
+		enemy.setLayoutX(enemy.x() + enemy.xvel() * sec);
+		enemy.setLayoutY(enemy.y() + enemy.yvel() * sec);
+	}
+	
+	public static void applyVelocity(Enemy enemy, long nsSinceLastFrame) {
+		double sec = nsSinceLastFrame / 1e9;
 		enemy.setLayoutX(enemy.x() + enemy.xvel() * sec);
 		enemy.setLayoutY(enemy.y() + enemy.yvel() * sec);
 	}

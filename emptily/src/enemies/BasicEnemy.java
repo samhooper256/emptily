@@ -6,7 +6,7 @@ import javafx.geometry.Point2D;
 import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
 
-public class BasicEnemy extends AbstractEnemy implements HittableEnemy, DelayUpdatable {
+public class BasicEnemy extends AbstractSimpleMovementEnemy implements DelayUpdatable {
 
 	public static final double SIZE = 20;
 	
@@ -17,8 +17,6 @@ public class BasicEnemy extends AbstractEnemy implements HittableEnemy, DelayUpd
 	private static final double VELOCITY = 50;
 	private final PathManager pathManager;
 	
-	private double xvel, yvel;
-	
 	public BasicEnemy() {
 		super(DEFAULT_HEALTH);
 		setMinWidth(SIZE);
@@ -26,7 +24,7 @@ public class BasicEnemy extends AbstractEnemy implements HittableEnemy, DelayUpd
 		setMinHeight(SIZE);
 		setMaxHeight(SIZE);
 		setBackground(BACKGROUND);
-		pathManager = new PathManager(this, CORNER_DIST);
+		pathManager = new ContactPathManager(this, CORNER_DIST);
 	}
 	
 	@Override
@@ -49,26 +47,6 @@ public class BasicEnemy extends AbstractEnemy implements HittableEnemy, DelayUpd
 		return y() + SIZE / 2;
 	}
 
-	@Override
-	public double xvel() {
-		return xvel;
-	}
-	
-	@Override
-	public double yvel() {
-		return yvel;
-	}
-	
-	@Override
-	public void setxvel(double xvel) {
-		this.xvel = xvel;
-	}
-	
-	@Override
-	public void setyvel(double yvel) {
-		this.yvel = yvel;
-	}
-	
 	@Override
 	public double maxVelocity() {
 		return VELOCITY;

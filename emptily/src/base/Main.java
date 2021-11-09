@@ -11,8 +11,9 @@ import javafx.scene.image.Image;
 import javafx.stage.Stage;
 
 /*
- * TODO: Make it so you can scroll in and out in zoom mode?
- * TODO: Find some way to tell the user about the CTRL zoom feature.
+ * TODO: make Cannons have a bigger death burst?
+ * TODO: make Cannonballs have a much smaller (or nonexistent) death burst.
+ * TODO: redesign levels to add more rooms and Cannons.
  */
 public class Main extends Application {
 	

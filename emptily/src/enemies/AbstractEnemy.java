@@ -1,6 +1,7 @@
 package enemies;
 
 import base.Main;
+import base.game.content.MainContent;
 import javafx.scene.layout.StackPane;
 import javafx.scene.paint.Color;
 
@@ -26,7 +27,13 @@ abstract class AbstractEnemy extends StackPane implements HittableEnemy {
 	
 	/** An action to be run when this {@link Enemy} dies. */
 	protected void onDeath() {
-		Main.content().requestRemove(this);
+		delete();
 		Main.content().addBurst(new CircleBurst(Color.RED, 20), centerX(), centerY());
 	}
+	
+	/** Removes this enemy from {@link MainContent}. */
+	protected void delete() {
+		Main.content().requestRemove(this);
+	}
+	
 }
