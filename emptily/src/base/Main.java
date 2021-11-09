@@ -102,7 +102,7 @@ public class Main extends Application {
 	 */
 	public static InputStream getResourceStream(String filename) {
 		Optional<InputStream> stream = getOptionalResourceStream(filename);
-		if(stream.isEmpty())
+		if(!stream.isPresent())
 			throw new IllegalArgumentException("The resource at " + RESOURCES_PREFIX + filename + " does not exist");
 		return stream.get();
 	}

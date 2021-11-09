@@ -1,6 +1,6 @@
 package floors;
 
-import java.util.List;
+import java.util.*;
 
 import rooms.RectangleLayout;
 import rooms.RoomLayout;
@@ -9,7 +9,7 @@ import utils.RNG;
 
 public enum Floor {
 
-	FIRST(5, List.of(
+	FIRST(5, Arrays.asList(
 			RoomLayout.builder()
 			.setSize(400, 400)
 			.setGaps(leftGap(100, 400), rightGap(100, 400), topGap(100, 400), bottomGap(100, 400))
@@ -33,7 +33,7 @@ public enum Floor {
 			.setPlayerSpawn(200, 400)
 			.build()
 	)),
-	SECOND(7, List.of(
+	SECOND(7, Arrays.asList(
 			RoomLayout.builder()
 			.setSize(400, 400)
 			.setGaps(leftGap(100, 400), rightGap(100, 400), /*topGap(100, 400),*/ bottomGap(100, 400))
@@ -70,7 +70,7 @@ public enum Floor {
 			.setGaps(topGap(100, 400), bottomGap(100, 400))
 			.build()
 	)),
-	THIRD(10, List.of(
+	THIRD(10, Arrays.asList(
 			RoomLayout.builder()
 			.setSize(400, 400)
 			.setGaps(leftGap(100, 400), rightGap(100, 400), topGap(100, 400), bottomGap(100, 400))
@@ -118,7 +118,7 @@ public enum Floor {
 			.build()
 	));
 	
-	public static final List<Floor> ORDER = List.of(Floor.FIRST, Floor.SECOND, Floor.THIRD);
+	public static final List<Floor> ORDER = Arrays.asList(Floor.FIRST, Floor.SECOND, Floor.THIRD);
 	
 	private static final double INTERIOR_CUT = RoomLayout.DEFAULT_BORDER_THICKNESS * 2;
 

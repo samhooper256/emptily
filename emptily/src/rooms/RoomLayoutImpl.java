@@ -136,7 +136,7 @@ final class RoomLayoutImpl implements RoomLayout {
 	@Override
 	public RoomLayout copy() {
 		return new RoomLayoutImpl(width, height, playerSpawnX, playerSpawnY,
-				interiorRects.toArray(RectangleLayout[]::new), allGaps.toArray(), spawns);
+				interiorRects.toArray(new RectangleLayout[0]), allGaps.toArray(), spawns);
 	}
 	
 	@Override
