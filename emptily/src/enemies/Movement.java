@@ -3,7 +3,7 @@ package enemies;
 import base.game.content.Intersections;
 import javafx.geometry.Point2D;
 
-final class Movement {
+public final class Movement {
 
 	private Movement() {
 		

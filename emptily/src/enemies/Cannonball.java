@@ -2,6 +2,7 @@ package enemies;
 
 import base.DelayUpdatable;
 import base.game.content.Intersections;
+import base.game.effects.SimpleBurst;
 import javafx.geometry.Point2D;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Circle;
@@ -57,5 +58,12 @@ public final class Cannonball extends AbstractSimpleMovementEnemy implements Del
 	public double maxVelocity() {
 		return VELOCITY;
 	}
+
+	@Override
+	protected void onDeath() {
+		delete();
+		addBurstCentered(new SimpleBurst(Color.RED, RADIUS));
+	}
+	
 	
 }

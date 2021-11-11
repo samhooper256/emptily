@@ -7,6 +7,7 @@ import java.util.stream.Stream;
 
 import base.*;
 import base.game.*;
+import base.game.effects.*;
 import enemies.*;
 import floors.*;
 import hallways.*;
@@ -143,7 +144,7 @@ public class MainContent extends Pane implements DelayUpdatable {
 		enemies.add(e);
 	}
 	
-	public void addBurst(CircleBurst burst, double x, double y) {
+	public void addBurst(Burst burst, double x, double y) {
 		burst.setLayoutX(x);
 		burst.setLayoutY(y);
 		addRequests.add(burst);

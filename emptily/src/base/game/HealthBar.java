@@ -37,7 +37,7 @@ public final class HealthBar extends HBox {
 	}
 
 	public void reset() {
-		maxhp = 3;
+		maxhp = DEFAULT_HEALTH;
 		refill();
 	}
 	

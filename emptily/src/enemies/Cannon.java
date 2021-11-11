@@ -1,11 +1,15 @@
 package enemies;
 
 import base.*;
+import base.game.effects.*;
+import enemies.paths.*;
 import fxutils.*;
 import javafx.geometry.Point2D;
 import javafx.scene.layout.Pane;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.*;
+import javafx.util.Duration;
+import utils.Angles;
 
 public class Cannon extends AbstractSimpleMovementEnemy implements DelayUpdatable {
 
@@ -16,13 +20,21 @@ public class Cannon extends AbstractSimpleMovementEnemy implements DelayUpdatabl
 			CORNER_DIST = OUTER_SIZE * Math.sqrt(2) / 2 + 1,
 			VELOCITY = 30, /** in pixels per second. */
 			MIN_PLAYER_DIST = 200,
-			SHOOT_COOLDOWN = 2_000_000_000; /* in nanoseconds */
+			SHAFT_ROTATION_SPEED = Math.PI * 3; //in radians per second.
 	
-	private final PathManager pathManager;
+	private static final long
+			SHOOT_COOLDOWN = 2_000_000_000,
+			MIN_PLAYER_TIME_TO_CHANGE_PATH = 500_000_000,
+			MIN_PLAYER_TIME_TO_BLAST = MIN_PLAYER_TIME_TO_CHANGE_PATH;
+	
+	private final DistanceSightTimedPathManager pathManager;
 	private final Pane innerPane;
 	private final Circle circle;
 	private final Rectangle rect;
+	
+	
 	private long nsSinceLastCannonball;
+	private double shaftDestAngrad, shaftCurAngrad;
 	
 	public Cannon() {
 		super(DEFAULT_HEALTH);
@@ -42,9 +54,11 @@ public class Cannon extends AbstractSimpleMovementEnemy implements DelayUpdatabl
 		
 		innerPane.getChildren().addAll(circle, rect);
 		getChildren().add(innerPane);
-		pathManager = new DistancePathManager(this, CORNER_DIST, MIN_PLAYER_DIST);
+		pathManager =
+				new DistanceSightTimedPathManager(this, CORNER_DIST, MIN_PLAYER_DIST, MIN_PLAYER_TIME_TO_CHANGE_PATH);
 		nsSinceLastCannonball = 0;
-		
+		shaftDestAngrad = 0;
+		shaftCurAngrad = 0;
 //		this.setBorder(Borders.of(Color.BLUE));
 	}
 	
@@ -52,20 +66,41 @@ public class Cannon extends AbstractSimpleMovementEnemy implements DelayUpdatabl
 	public void update(long nsSinceLastFrame) {
 		pathManager.update(nsSinceLastFrame);
 		nsSinceLastCannonball += nsSinceLastFrame;
-		
+		double sec = nsSinceLastFrame / 1e9;
 		if(pathManager.couldSeePlayerAfterLastUpdate()) {
-			pointShaft(pathManager.angradToPlayer());
-			if(nsSinceLastCannonball >= SHOOT_COOLDOWN) {
+			orientShaftTowards(pathManager.angradToPlayer(), sec);
+			if(pathManager.sightTime() >= MIN_PLAYER_TIME_TO_BLAST && nsSinceLastCannonball >= SHOOT_COOLDOWN) {
 				blast();
 				nsSinceLastCannonball = 0;
 			}
 		}
 		else {
-			pointShaft(pathManager.angradOfVelocity());
+			orientShaftTowards(pathManager.angradOfVelocity(), sec);
 		}
 	}
 
+	private void orientShaftTowards(double angrad, double sec) {
+		//angle will be from -PI to +PI.
+		shaftDestAngrad = Angles.make0to2PI(angrad);
+		if(shaftCurAngrad == shaftDestAngrad)
+			return;
+		double shaftAdd = sec * SHAFT_ROTATION_SPEED;
+		double newAngrad;
+		if(shaftCurAngrad < shaftDestAngrad) {
+			newAngrad = shaftCurAngrad + shaftAdd;
+			if(newAngrad > shaftDestAngrad)
+				newAngrad = shaftDestAngrad;
+		}
+		else { //shaftCurAngrad > shaftDestAngrad
+			newAngrad = shaftCurAngrad - shaftAdd;
+			if(newAngrad < shaftDestAngrad)
+				newAngrad = shaftDestAngrad;
+		}
+		pointShaft(newAngrad);
+	}
+	
 	private void pointShaft(double angrad) {
+		shaftCurAngrad = angrad;
 		double effectiveRadius = RADIUS;
 		double xFromCenter = Math.cos(angrad) *  effectiveRadius, yFromCenter = Math.sin(angrad) * effectiveRadius;
 		double finalX = OUTER_SIZE / 2 + xFromCenter - rect.getWidth() / 2;
@@ -97,5 +132,17 @@ public class Cannon extends AbstractSimpleMovementEnemy implements DelayUpdatabl
 	public double maxVelocity() {
 		return VELOCITY;
 	}
+
+	@Override
+	protected void onDeath() {
+		delete();
+		addBurstCentered(new LayeredBurst(
+				new Burst[] {
+						new SimpleBurst(Color.RED, RADIUS * 1.5, Duration.millis(400)),
+						new SimpleBurst(Color.RED, RADIUS * 2, Duration.millis(600))},
+				new Duration[] {Duration.ZERO, Duration.millis(100)}));
+	}
+	
+	
 
 }

@@ -125,19 +125,10 @@ public enum Floor {
 			.setPlayerSpawn(200, 200)
 			.build(),
 			RoomLayout.builder()
-			.setSize(800, 400)
-			.setRects(RectangleLayout.of(50, 50, 40, 300), RectangleLayout.of(710, 50, 40, 300))
-			.setGaps(topGap(100, 800), bottomGap(100, 800))
-			.addCannonCentered(26, 200)
-			.addCannonCentered(774, 200)
-			.setPlayerSpawn(400, 150)
-			.build(),
-			RoomLayout.builder()
 			.setSize(400, 800)
 			.setRects(RectangleLayout.of(100, 100, 200, 200), RectangleLayout.of(100, 500, 200, 200))
 			.setGaps(leftGap(100, 800), rightGap(100, 800))
 			.addCannonCentered(200, 50)
-			.addCannonCentered(200, 750)
 			.setPlayerSpawn(200, 400)
 			.build()
 	));

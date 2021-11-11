@@ -1,15 +1,16 @@
-package enemies;
+package enemies.paths;
 
 import base.*;
 import base.game.Player;
 import base.game.content.Intersections;
+import enemies.*;
 import javafx.geometry.Point2D;
 import rooms.*;
 
-abstract class PathManager implements DelayUpdatable {
+public abstract class PathManager implements DelayUpdatable {
 
-	private static final long MIN_TIME_ON_PATH = 200_000_000;
-	private static final double POINT_PATH_THRESHOLD = 0.8;
+	private static final long MIN_TIME_ON_PATH = 500_000_000;
+	private static final double POINT_PATH_THRESHOLD = 1;
 	
 	protected final Enemy enemy;
 	
@@ -48,34 +49,48 @@ abstract class PathManager implements DelayUpdatable {
 		boolean oldCanSeePlayer = canSeePlayer;
 		boolean newCanSeePlayer = canSeePlayer();
 		canSeePlayer = newCanSeePlayer;
-		if(Intersections.intersectsPlayer(enemy)) {
+		if(Intersections.intersectsPlayer(enemy))
 			discardPath();
+		else if(newCanSeePlayer)
+			actionIfInSight(nsSinceLastFrame, oldCanSeePlayer);
+		else
+			actionIfOutOfSight(nsSinceLastFrame, oldCanSeePlayer);
+	}
+
+	public void actionIfOutOfSight(long nsSinceLastFrame, boolean couldSeePlayerBeforeThisUpdate) {
+		defaultActionIfOutOfSight(nsSinceLastFrame, couldSeePlayerBeforeThisUpdate);
+	}
+	
+	public final void defaultActionIfOutOfSight(long nsSinceLastFrame, boolean couldSeePlayerBeforeThisUpdate) {
+//		if(!hasPath() || isAtEndOfPath() || !onPathAndMustStayOnPath() && couldSeePlayerBeforeThisUpdate ||
+//				canRefresh()) {
+//			createNewPath();
+//		}
+		if(!hasPath() || isAtEndOfPath() || canRefresh()) {
+			createNewPath();
 		}
-		else if(newCanSeePlayer) {
-			actionIfInSight(nsSinceLastFrame);
-		}
-		else {
-			boolean lostSightOfPlayer = oldCanSeePlayer;
-			if(!hasPath() || (!onPathAndCannotRefresh() && (lostSightOfPlayer || isAtEndOfPath())))
-				createNewPath();
-			runPath(nsSinceLastFrame);
-		}
+		runPath(nsSinceLastFrame);
 	}
 
 	/** The action to be run if the player is in sight. */
-	public abstract void actionIfInSight(long nsSinceLastFrame);
+	public abstract void actionIfInSight(long nsSinceLastFrame, boolean couldSeePlayerBeforeThisUpdate);
 	
-	protected boolean onPathAndCannotRefresh() {
-		return hasPath() && nsSinceLastPath < MIN_TIME_ON_PATH;
+	protected boolean onPathAndMustStayOnPath() {
+		return hasPath() && nsSinceLastPath <= MIN_TIME_ON_PATH;
 	}
 
+	protected boolean canRefresh() {
+		return nsSinceLastPath > MIN_TIME_ON_PATH;
+	}
+	
 	protected void runPath(long nsSinceLastFrame) {
-		while(pathIndex < path.size() && enemy.center().distance(path.get(pathIndex)) <= POINT_PATH_THRESHOLD)
+		Point2D enemyCenter = enemy.center();
+		while(pathIndex < path.size() && enemyCenter.distance(path.get(pathIndex)) <= POINT_PATH_THRESHOLD)
 			pathIndex++;
 		if(isOnUnfinishedPath()) {
 			Point2D atIndex = path.get(pathIndex);
 			Movement.tickTowards(enemy, atIndex, enemy.maxVelocity(), nsSinceLastFrame);
-			if(enemy.center().distance(atIndex) <= POINT_PATH_THRESHOLD)
+			if(enemyCenter.distance(atIndex) <= POINT_PATH_THRESHOLD)
 				pathIndex++;
 		}
 	}

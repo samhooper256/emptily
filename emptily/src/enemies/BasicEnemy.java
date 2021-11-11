@@ -1,6 +1,7 @@
 package enemies;
 
 import base.DelayUpdatable;
+import enemies.paths.*;
 import fxutils.Backgrounds;
 import javafx.geometry.Point2D;
 import javafx.scene.layout.*;
