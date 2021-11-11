@@ -24,7 +24,6 @@ public class LayeredBurst extends Burst {
 
 	@Override
 	public void startAnimation() {
-		System.out.printf("[enter] startAnimation%n");
 		timeline.playFromStart();
 	}
 	

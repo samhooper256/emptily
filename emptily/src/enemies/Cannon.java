@@ -84,21 +84,8 @@ public class Cannon extends AbstractSimpleMovementEnemy implements DelayUpdatabl
 		shaftDestAngrad = Angles.make0to2PI(angrad);
 		if(shaftCurAngrad == shaftDestAngrad)
 			return;
-		double 	shaftAdd = sec * SHAFT_ROTATION_SPEED,
-				upDist = Angles.upWrapDist2PI(shaftCurAngrad, shaftDestAngrad),
-				downDist = Angles.downWrapDist2PI(shaftCurAngrad, shaftDestAngrad);
-		double newAngrad;
-		if(upDist <= downDist) {
-			newAngrad = Angles.make0to2PI(shaftCurAngrad + shaftAdd);
-			if(newAngrad > shaftDestAngrad)
-				newAngrad = shaftDestAngrad;
-		}
-		else {
-			newAngrad = Angles.make0to2PI(shaftCurAngrad - shaftAdd);
-			if(newAngrad < shaftDestAngrad)
-				newAngrad = shaftDestAngrad;
-		}
-		pointShaft(newAngrad);
+		double 	shaftAdd = sec * SHAFT_ROTATION_SPEED;
+		pointShaft(Angles.makeCloser(shaftCurAngrad, shaftDestAngrad, shaftAdd));
 	}
 	
 	private void pointShaft(double angrad) {
