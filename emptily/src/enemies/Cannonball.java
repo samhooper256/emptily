@@ -60,10 +60,14 @@ public final class Cannonball extends AbstractSimpleMovementEnemy implements Del
 	}
 
 	@Override
-	protected void onDeath() {
+	public void die() {
 		delete();
 		addBurstCentered(new SimpleBurst(Color.RED, RADIUS));
 	}
 	
+	@Override
+	public boolean isRequired() {
+		return false;
+	}
 	
 }

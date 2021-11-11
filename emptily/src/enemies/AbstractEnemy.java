@@ -23,11 +23,12 @@ abstract class AbstractEnemy extends StackPane implements HittableEnemy {
 	public void takeHit(double damage) {
 		health -= damage;
 		if(health <= 0)
-			onDeath();
+			die();
 	}
 	
 	/** An action to be run when this {@link Enemy} dies. */
-	protected void onDeath() {
+	@Override
+	public void die() {
 		delete();
 		Main.content().addBurst(new SimpleBurst(Color.RED, 20), centerX(), centerY());
 	}

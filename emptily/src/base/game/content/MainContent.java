@@ -284,4 +284,10 @@ public class MainContent extends Pane implements DelayUpdatable {
 		return roomMap.keySet();
 	}
 	
+	public void killAllEnemies() {
+		for(Enemy e : enemies)
+			e.die();
+		enemies.clear();
+	}
+	
 }

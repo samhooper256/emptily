@@ -50,13 +50,11 @@ public final class LayoutBuilder {
 	}
 	
 	public LayoutBuilder addBasicEnemy(double relX, double relY) {
-		spawnList().add(new BasicEnemySpawn(relX, relY));
-		return this;
+		return addSpawn(new BasicEnemySpawn(relX, relY));
 	}
 	
 	public LayoutBuilder addBasicEnemyCentered(double centerX, double centerY) {
-		spawnList().add(BasicEnemySpawn.centered(centerX, centerY));
-		return this;
+		return addSpawn(BasicEnemySpawn.centered(centerX, centerY));
 	}
 	
 	public LayoutBuilder addBasicEnemiesCentered(double... xyPairs) {
@@ -64,17 +62,20 @@ public final class LayoutBuilder {
 	}
 	
 	public LayoutBuilder addCannon(double relX, double relY) {
-		spawnList().add(new CannonSpawn(relX, relY));
-		return this;
+		return addSpawn(new CannonSpawn(relX, relY));
 	}
 	
 	public LayoutBuilder addCannonCentered(double centerX, double centerY) {
-		spawnList().add(CannonSpawn.centered(centerX, centerY));
-		return this;
+		return addSpawn(CannonSpawn.centered(centerX, centerY));
 	}
 	
 	public LayoutBuilder addCannonsCentered(double... xyPairs) {
 		return addSpawnsCentered(this::addCannonCentered, xyPairs);
+	}
+	
+	public LayoutBuilder addSpawn(EnemySpawn spawn) {
+		spawnList().add(spawn);
+		return this;
 	}
 	
 	private LayoutBuilder addSpawnsCentered(DoubleBiConsumer consumer, double... xyPairs) {

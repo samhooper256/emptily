@@ -38,8 +38,10 @@ public interface Enemy {
 	
 	double yvel();
 	
+	/** If this enemy does not move, this method throws an {@link UnsupportedOperationException}. */
 	void setxvel(double xvel);
 	
+	/** If this enemy does not move, this method throws an {@link UnsupportedOperationException}. */
 	void setyvel(double yvel);
 	
 	Point2D center();
@@ -53,5 +55,12 @@ public interface Enemy {
 	}
 	
 	double maxVelocity();
+	
+	/** Returns {@code true} if this {@link Enemy} must be killed before the room unlocks. {@code true} by default. */
+	default boolean isRequired() {
+		return true;
+	}
+	
+	void die();
 	
 }

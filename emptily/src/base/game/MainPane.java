@@ -4,6 +4,7 @@ import java.util.*;
 
 import base.*;
 import base.game.content.MainContent;
+import enemies.Enemy;
 import floors.*;
 import javafx.geometry.*;
 import javafx.scene.input.KeyCode;
@@ -67,14 +68,17 @@ public class MainPane extends StackPane implements DelayUpdatable {
 			}
 		}
 		else if(newRoom != null) {
-			if(isFighting && !enemiesExist())
+			if(isFighting && !requiredEnemiesExist())
 				stopFighting(newRoom);
 		}
 		content().update(nsSinceLastFrame);
 	}
 	
-	public boolean enemiesExist() {
-		return content().enemyCount() != 0;
+	public boolean requiredEnemiesExist() {
+		for(Enemy e : content().enemies())
+			if(e.isRequired())
+				return true;
+		return false;
 	}
 	
 	public Collection<Platform> platforms() {
@@ -95,6 +99,7 @@ public class MainPane extends StackPane implements DelayUpdatable {
 		isFighting = false;
 		Main.scene().stoppedFighting();
 		markCleared(ri);
+		content().killAllEnemies();
 		content().unlock(ri);
 		content().showAdjacentHallways(ri);
 		if(!anyRoomsLeft())
@@ -125,5 +130,5 @@ public class MainPane extends StackPane implements DelayUpdatable {
 	public boolean isFighting() {
 		return isFighting;
 	}
-	
+
 }

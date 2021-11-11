@@ -5,6 +5,7 @@ import java.util.*;
 import rooms.RectangleLayout;
 import rooms.RoomLayout;
 import rooms.gaps.DoorGap;
+import rooms.spawns.SpikeSpawn;
 import utils.RNG;
 
 public enum Floor {
@@ -129,6 +130,7 @@ public enum Floor {
 			.setRects(RectangleLayout.of(100, 100, 200, 200), RectangleLayout.of(100, 500, 200, 200))
 			.setGaps(leftGap(100, 800), rightGap(100, 800))
 			.addCannonCentered(200, 50)
+			.addSpawn(SpikeSpawn.centered(200, 400))
 			.setPlayerSpawn(200, 400)
 			.build()
 	));

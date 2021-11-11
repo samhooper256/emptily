@@ -123,7 +123,7 @@ public class Cannon extends AbstractSimpleMovementEnemy implements DelayUpdatabl
 	}
 
 	@Override
-	protected void onDeath() {
+	public void die() {
 		delete();
 		addBurstCentered(new LayeredBurst(
 				new Burst[] {
