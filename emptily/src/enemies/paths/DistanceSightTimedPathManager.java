@@ -17,9 +17,11 @@ public final class DistanceSightTimedPathManager extends DistancePathManager {
 	@Override
 	public void actionIfInSight(long nsSinceLastFrame, boolean couldSeePlayerBeforeThisUpdate) {
 		sightTime += nsSinceLastFrame;
-		if(sightTime >= minSightTime && distanceToPlayer() > minDist()) {
-			discardPath();
-			Movement.tickTowards(enemy, Main.content().player().center(), enemy.maxVelocity(), nsSinceLastFrame);
+		if(sightTime >= minSightTime) {
+			if(distanceToPlayer() > minDist()) {
+				discardPath();
+				Movement.tickTowards(enemy, Main.content().player().center(), enemy.maxVelocity(), nsSinceLastFrame);
+			}
 		}
 		else {
 			defaultActionIfOutOfSight(nsSinceLastFrame, couldSeePlayerBeforeThisUpdate);
