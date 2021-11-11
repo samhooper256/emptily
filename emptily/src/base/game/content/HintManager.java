@@ -7,24 +7,19 @@ import javafx.scene.input.KeyCode;
 
 final class HintManager implements DelayUpdatable {
 	
-	private static final long
-			MOVEMENT_RULES_DELAY = 1_000_000_000L * 5, //5 seconds
-			SHOOTING_HINT_DELAY = MOVEMENT_RULES_DELAY; 
+	private static final long MOVEMENT_RULES_DELAY = 1_000_000_000L * 5; //5 seconds
 	
 	private final MainContent content;
 	private final MovementRulesHint mrh;
-	private final ShootingHint shootingHint;
 	
-	private boolean canShowMovementRules, hasShotYet;
-	private long timeSinceLastMoved, timeSinceStartedFighting;
+	private boolean canShowMovementRules;
+	private long timeSinceLastMoved;
 	
 	HintManager(MainContent content) {
 		this.content = content;
 		timeSinceLastMoved = 0;
 		canShowMovementRules = true;
-		hasShotYet = false;
 		mrh = new MovementRulesHint();
-		shootingHint = new ShootingHint();
 	}
 	
 	@Override
@@ -34,13 +29,6 @@ final class HintManager implements DelayUpdatable {
 			if(timeSinceLastMoved > MOVEMENT_RULES_DELAY) {
 				content.requestEnd(makeRequest(mrh));
 				canShowMovementRules = false;
-			}
-		}
-		if(Main.pane().isFighting() && !hasShotYet) {
-			timeSinceStartedFighting += nsSinceLastFrame;
-			if(timeSinceStartedFighting > SHOOTING_HINT_DELAY) {
-				content.requestEnd(makeRequest(shootingHint));
-				hasShotYet = true;
 			}
 		}
 	}
@@ -57,11 +45,6 @@ final class HintManager implements DelayUpdatable {
 			canShowMovementRules = false;
 			mrh.animateOff();
 		}
-	}
-	
-	void leftClicked() {
-		hasShotYet = true;
-		shootingHint.animateOff();
 	}
 	
 	void reset() {

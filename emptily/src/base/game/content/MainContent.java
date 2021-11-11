@@ -177,7 +177,6 @@ public class MainContent extends Pane implements DelayUpdatable {
 		double ydist = point.getY() - playerCenter.getY();
 		double angdeg = Math.toDegrees(Math.atan2(ydist, xdist));
 		getChildren().add(new LineBullet(playerCenter.getX(), playerCenter.getY(), angdeg));
-		hintManager.leftClicked();
 	}
 	
 	@Override
