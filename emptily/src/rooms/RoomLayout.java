@@ -12,7 +12,9 @@ import rooms.spawns.EnemySpawn;
 
 public interface RoomLayout {
 	
-	double DEFAULT_BORDER_THICKNESS = 10;
+	double BORDER_THICKNESS = 10;
+	
+	String name();
 	
 	static RoomLayout copyOf(RoomLayout rl) {
 		if(rl == null)
@@ -24,8 +26,12 @@ public interface RoomLayout {
 		return new LayoutBuilder();
 	}
 	
+	static LayoutBuilder builder(String name) {
+		return builder().setName(name);
+	}
+	
 	default double borderThickness() {
-		return DEFAULT_BORDER_THICKNESS;
+		return BORDER_THICKNESS;
 	}
 	
 	/** Assumes the given point is within the coordinate space of this {@link RoomLayout} (that is, (0, 0) is the top

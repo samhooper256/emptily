@@ -16,7 +16,6 @@ public final class FloorPlanBuilder {
 
 	private static final double DEFAULT_HALLWAY_WALL_WIDTH = 10;
 	
-	
 	private static Iterable<DoorGap> randomOrder(DoorGapCollection<DoorGap> gaps) {
 		ArrayList<DoorGap> a = new ArrayList<>(gaps.size());
 		for(DoorGap g : gaps)
@@ -26,6 +25,7 @@ public final class FloorPlanBuilder {
 	}
 	
 	private final List<RoomLayout> layoutChoices;
+	private final Set<RoomLayout> usedLayoutsThisPass;
 	private final int desiredRoomCount;
 	private final double hallwayLength, hallwayWallWidth;
 	
@@ -36,6 +36,7 @@ public final class FloorPlanBuilder {
 	public FloorPlanBuilder(List<RoomLayout> layoutChoices, int desiredRoomCount, double hallwayLength, 
 			double hallwayWallWidth) {
 		this.layoutChoices = layoutChoices;
+		usedLayoutsThisPass = new HashSet<>();
 		this.desiredRoomCount = desiredRoomCount;
 		this.hallwayLength = hallwayLength;
 		this.hallwayWallWidth = hallwayWallWidth;
@@ -71,6 +72,7 @@ public final class FloorPlanBuilder {
 	}
 	
 	private void addRoom() {
+		System.out.printf("[enter] addRoom, used=%s%n", usedLayoutsThisPass);
 		while(!q.isEmpty()) {
 			RoomInfo i = q.peek();
 			RoomLayout ilayout = i.layout();
@@ -141,6 +143,7 @@ public final class FloorPlanBuilder {
 	/** o is the new room.*/
 	private boolean tryPlace(RoomInfo i, DoorGap igap, RoomLayout olayout, DoorGap ogap, double tlx, double tly) {
 		if(canPlaceRoom(olayout, tlx, tly)) {
+			usedLayoutsThisPass.add(olayout);
 			RoomInfo o = RoomInfo.re(olayout, tlx, tly);
 //			System.out.printf("\t\tplacing (%.1f, %.1f)%n", o.tlx() / 480, o.tly() / 480);
 			usedGaps(o).add(ogap); //adds o to usedGaps map if not already present.
@@ -224,8 +227,18 @@ public final class FloorPlanBuilder {
 	}
 	
 	private List<RoomLayout> getRandomLayoutPermuation() {
-		List<RoomLayout> perm = new ArrayList<>(layoutChoices);
+		if(usedLayoutsThisPass.size() == layoutChoices.size()) {
+			usedLayoutsThisPass.clear();
+			List<RoomLayout> perm = new ArrayList<>(layoutChoices);
+			Collections.shuffle(perm);
+			return perm;
+		}
+		List<RoomLayout> perm = new ArrayList<>(layoutChoices.size());
+		for(RoomLayout rl : layoutChoices)
+			if(!usedLayoutsThisPass.contains(rl))
+				perm.add(rl);
 		Collections.shuffle(perm);
+		perm.addAll(usedLayoutsThisPass);
 		return perm;
 	}
 	

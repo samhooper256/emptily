@@ -12,9 +12,15 @@ public final class LayoutBuilder {
 	private RectangleLayout[] rects;
 	private DoorGap[] gaps;
 	private List<EnemySpawn> spawns;
+	private String name;
 	
 	public LayoutBuilder() {
 		
+	}
+	
+	public LayoutBuilder setName(String name) {
+		this.name = name;
+		return this;
 	}
 	
 	public LayoutBuilder setWidth(double width) {
@@ -73,6 +79,14 @@ public final class LayoutBuilder {
 		return addSpawnsCentered(this::addCannonCentered, xyPairs);
 	}
 	
+	public LayoutBuilder addSpikeCentered(double centerX, double centerY) {
+		return addSpawn(SpikeSpawn.centered(centerX, centerY));
+	}
+	
+	public LayoutBuilder addSpikesCentered(double... xyPairs) {
+		return addSpawnsCentered(this::addSpikeCentered, xyPairs);
+	}
+	
 	public LayoutBuilder addSpawn(EnemySpawn spawn) {
 		spawnList().add(spawn);
 		return this;
@@ -104,7 +118,7 @@ public final class LayoutBuilder {
 			rects = new RectangleLayout[0];
 		if(spawns == null)
 			spawns = Collections.emptyList();
-		return new RoomLayoutImpl(width, height, playerSpawnX, playerSpawnY, rects, gaps, spawns);
+		return new RoomLayoutImpl(name, width, height, playerSpawnX, playerSpawnY, rects, gaps, spawns);
 	}
 	
 }

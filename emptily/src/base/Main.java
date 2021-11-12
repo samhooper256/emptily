@@ -16,6 +16,8 @@ import javafx.stage.Stage;
  * TODO: redesign levels to add more rooms and Cannons.
  * TODO: fix bug where the shooting hint doesn't show text.
  * TODO: cannons are buggy around corners.
+ * TODO: verify that new roomgen algorithm is working
+ * TODO: ability to name RoomLayouts?
  */
 public class Main extends Application {
 	

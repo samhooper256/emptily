@@ -17,7 +17,7 @@ public class MainPane extends StackPane implements DelayUpdatable {
 	private final Set<RoomInfo> clearedRooms;
 	
 	private volatile boolean isFighting; //not sure if volatile is needed
-	private int roomsLeftToClear, levelIndex;
+	private int levelIndex;
 	
 	MainPane() {
 		content = new MainContent();
@@ -33,7 +33,6 @@ public class MainPane extends StackPane implements DelayUpdatable {
 		this.levelIndex = levelIndex;
 		content().startLevel(levelIndex);
 		clearedRooms.add(content().currentRoom());
-		roomsLeftToClear = content().floorPlan().roomCount() - 1;
 	}
 	
 	public void startNextLevel() {
@@ -108,7 +107,6 @@ public class MainPane extends StackPane implements DelayUpdatable {
 	
 	private void markCleared(RoomInfo ri) {
 		clearedRooms.add(ri);
-		roomsLeftToClear--;
 	}
 	
 	public boolean isCleared(RoomInfo ri) {
@@ -116,7 +114,7 @@ public class MainPane extends StackPane implements DelayUpdatable {
 	}
 	
 	public boolean anyRoomsLeft() {
-		return roomsLeftToClear > 0;
+		return clearedRooms.size() < content().floorPlan().roomCount();
 	}
 	
 	private void levelComplete() {

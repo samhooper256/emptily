@@ -14,14 +14,16 @@ final class RoomLayoutImpl implements RoomLayout {
 	private final RectangleLayout top, bottom, left, right;
 	private final Collection<EnemySpawn> spawns;
 	private final double playerSpawnX, playerSpawnY;
+	private final String name;
 	
 	private HorizontalGapCollection topGaps, bottomGaps;
 	private VerticalGapCollection leftGaps, rightGaps;
 	private DoorGapCollection<DoorGap> allGaps;
 	
 	/** Assumes {@code spawns} is not modified after being passed to this constructor.*/
-	public RoomLayoutImpl(double width, double height, double playerSpawnX, double playerSpawnY,
+	public RoomLayoutImpl(String name, double width, double height, double playerSpawnX, double playerSpawnY,
 			RectangleLayout[] interiorRects, DoorGap[] gaps, Collection<EnemySpawn> spawns) {
+		this.name = Objects.requireNonNull(name);
 		this.width = width;
 		this.height = height;
 		this.interiorRects = new HashSet<>();
@@ -135,7 +137,7 @@ final class RoomLayoutImpl implements RoomLayout {
 	/** {@link #spawns() Spawns} are <em>not</em> copied.*/
 	@Override
 	public RoomLayout copy() {
-		return new RoomLayoutImpl(width, height, playerSpawnX, playerSpawnY,
+		return new RoomLayoutImpl(name, width, height, playerSpawnX, playerSpawnY,
 				interiorRects.toArray(new RectangleLayout[0]), allGaps.toArray(), spawns);
 	}
 	
@@ -152,6 +154,26 @@ final class RoomLayoutImpl implements RoomLayout {
 	@Override
 	public double playerSpawnY() {
 		return playerSpawnY;
+	}
+
+	@Override
+	public String name() {
+		return name;
+	}
+	
+	@Override
+	public String toString() {
+		return String.format("RoomLayoutImpl[%s]", name);
+	}
+	
+	@Override
+	public int hashCode() {
+		return name.hashCode();
+	}
+	
+	@Override
+	public boolean equals(Object obj) {
+		return obj instanceof RoomLayoutImpl && ((RoomLayoutImpl) obj).name.equals(name);
 	}
 	
 }
