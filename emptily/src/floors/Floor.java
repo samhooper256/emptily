@@ -5,7 +5,6 @@ import java.util.*;
 import rooms.RectangleLayout;
 import rooms.RoomLayout;
 import rooms.gaps.DoorGap;
-import rooms.spawns.SpikeSpawn;
 import utils.RNG;
 
 public enum Floor {
