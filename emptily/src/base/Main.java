@@ -11,13 +11,7 @@ import javafx.scene.image.Image;
 import javafx.stage.Stage;
 
 /*
- * TODO: make Cannons have a bigger death burst?
- * TODO: make Cannonballs have a much smaller (or nonexistent) death burst.
- * TODO: redesign levels to add more rooms and Cannons.
- * TODO: fix bug where the shooting hint doesn't show text.
- * TODO: cannons are buggy around corners.
- * TODO: verify that new roomgen algorithm is working
- * TODO: ability to name RoomLayouts?
+ * TODO ADD MY NAME TO APP
  */
 public class Main extends Application {
 	

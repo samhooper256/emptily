@@ -72,7 +72,6 @@ public final class FloorPlanBuilder {
 	}
 	
 	private void addRoom() {
-		System.out.printf("[enter] addRoom, used=%s%n", usedLayoutsThisPass);
 		while(!q.isEmpty()) {
 			RoomInfo i = q.peek();
 			RoomLayout ilayout = i.layout();
@@ -137,7 +136,6 @@ public final class FloorPlanBuilder {
 			}
 			q.remove();
 		}
-		System.out.printf("%nEXITING ADDROOM WITHOUT ADDING A ROOM.%n%n");
 	}
 	
 	/** o is the new room.*/
