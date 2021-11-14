@@ -30,10 +30,18 @@
 	-fx-background-color: #ffba66;
 }
 
+.author-label {
+	-fx-font: 36 "Courier New";
+	-fx-text-fill: green;
+}
+
 .lcp-home,
 .lcp-next-level {
 	-fx-background-color: green;
 	-fx-background-radius: 12;
+	-fx-border-color: black;
+	-fx-border-radius: 8;
+	-fx-border-width: 2;
 }
 
 .lcp-next-level {
@@ -49,8 +57,6 @@
 .lcp-title {
 	-fx-font: bold 48 "Courier New";
 	-fx-text-fill: blue;
-	-fx-stroke: black;
-	-fx-stroke-width: 1;
 }
 
 .you-died-label {
@@ -81,6 +87,16 @@
 .death-replay:hover {
 	-fx-background-color: #ffba66;
 	-fx-background-radius: 12	
+}
+
+.pause-title {
+	-fx-font: bold 72 "Courier New";
+	-fx-text-fill: black;
+}
+
+.pause-title .text {
+	-fx-stroke: white;
+	-fx-stroke-width: 1;
 }
 
 .pause-resume,

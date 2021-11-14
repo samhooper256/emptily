@@ -5,14 +5,12 @@ import java.util.Optional;
 
 import base.game.*;
 import base.game.content.MainContent;
+import base.mainmenu.Title;
 import fxutils.Images;
 import javafx.application.*;
 import javafx.scene.image.Image;
 import javafx.stage.Stage;
 
-/*
- * TODO ADD MY NAME TO APP
- */
 public class Main extends Application {
 	
 	private static final int
@@ -48,6 +46,7 @@ public class Main extends Application {
 		Timer timer = new Timer();
 		timer.start();
 		
+		stage.setTitle(Title.get());
 		stage.setMaximized(true);
 		stage.show();
 		

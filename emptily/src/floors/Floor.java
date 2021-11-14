@@ -110,7 +110,7 @@ public enum Floor {
 			.setPlayerSpawn(600, 150)
 			.build()
 	)),
-	THIRD(10, Arrays.asList(
+	THIRD(8, Arrays.asList(
 			RoomLayout.builder("3square")
 			.setSize(400, 400)
 			.setPlayerSpawn(200, 200)

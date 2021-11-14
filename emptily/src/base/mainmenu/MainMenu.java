@@ -1,47 +1,53 @@
 package base.mainmenu;
 
-import base.Main;
+import javafx.animation.*;
 import javafx.geometry.Pos;
-import javafx.scene.control.Button;
 import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
+import javafx.util.Duration;
 
 public class MainMenu extends StackPane {
 
-	private static final String PLAY_BUTTON_CSS = "main-menu-play";
-	
 	private final VBox vBox, buttonBox;
+	private final Timeline intro;
 	private final Title title;
-	private final Button play;
-	private final ControlsButton controlsButton;
+	private final PlayButton play;
+	private final ControlsButton controls;
+	private final AuthorLabel author;
+	
+	private boolean animatedIn;
 	
 	public MainMenu() {
 		vBox = new VBox();
 		vBox.setAlignment(Pos.CENTER);
 		
 		title = new Title();
+		play = new PlayButton();
+		controls = new ControlsButton();
+		author = new AuthorLabel();
 		
-		play = new Button("Play");
-		play.getStyleClass().add(PLAY_BUTTON_CSS);
-		play.setOnAction(eh -> playButtonAction());
-		
-		controlsButton = new ControlsButton();
-		
-		buttonBox = new VBox(12, play, controlsButton);
+		buttonBox = new VBox(12, play, controls);
 		buttonBox.setAlignment(Pos.TOP_CENTER);
-		vBox.getChildren().addAll(title, buttonBox);
+		vBox.getChildren().addAll(title, buttonBox, author);
 		
 		getChildren().add(vBox);
-	}
-	
-	private void playButtonAction() {
-		Main.outerScene().startGame();
+		
+		intro = new Timeline();
+		intro.getKeyFrames().add(new KeyFrame(Duration.ZERO, eh -> title.animateIn()));
+		intro.getKeyFrames().add(new KeyFrame(Duration.millis(700), eh -> play.animateIn()));
+		intro.getKeyFrames().add(new KeyFrame(Duration.millis(950), eh -> controls.animateIn()));
+		intro.getKeyFrames().add(new KeyFrame(Duration.millis(1200), eh -> author.animateIn()));
+		animatedIn = false;
 	}
 	
 	public void animateIn() {
-		if(controlsButton.isExpanded())
-			controlsButton.reset();
+		if(controls.isExpanded())
+			controls.reset();
 		title.animateIn();
+		if(!animatedIn) {
+			intro.playFromStart();
+			animatedIn = true;			
+		}
 	}
 	
 	public Title title() {

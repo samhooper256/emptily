@@ -13,9 +13,10 @@ import javafx.util.Duration;
 public class PauseLayer extends StackPane {
 
 	private static final Duration INTRO_DURATION = Duration.millis(400), OUTRO_DURATION = INTRO_DURATION;
-	private static final double PAUSED_FONT_SIZE = 72, BUTTON_FONT_SIZE = 60;
+	private static final double BUTTON_FONT_SIZE = 60;
 	private static final double BUTTON_BAR_HEIGHT = 120;
 	private static final String
+			TITLE_CSS = "pause-title",
 			RESUME_BUTTON_CSS = "pause-resume",
 			HOME_BUTTON_CSS = "pause-home";
 	
@@ -47,8 +48,7 @@ public class PauseLayer extends StackPane {
 		});
 		
 		title = new Label("Paused");
-		title.setFont(Font.font("Courier New", PAUSED_FONT_SIZE));
-		title.setTextFill(Color.BLACK);
+		title.getStyleClass().add(TITLE_CSS);
 		
 		resume = new Button("Resume");
 		resume.getStyleClass().add(RESUME_BUTTON_CSS);

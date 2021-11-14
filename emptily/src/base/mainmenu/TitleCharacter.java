@@ -29,7 +29,6 @@ public class TitleCharacter extends Label {
 			throw new IllegalArgumentException("str.length() != 1");
 		setText(str);
 		getStyleClass().add(CSS);
-		setTextFill(null);
 	}
 	
 	public void animateIn() {

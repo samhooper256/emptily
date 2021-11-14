@@ -1,6 +1,6 @@
 package base.mainmenu;
 
-import javafx.animation.Transition;
+import javafx.animation.*;
 import javafx.css.PseudoClass;
 import javafx.scene.control.Label;
 import javafx.scene.layout.StackPane;
@@ -9,7 +9,7 @@ import javafx.util.Duration;
 public class ControlsButton extends StackPane {
 	
 	private static final double HIDDEN_WIDTH = 300, SHOWN_WIDTH = 560, HEIGHT = 100;
-	private static final Duration showDuration = Duration.millis(400);
+	private static final Duration SHOW_DURATION = Duration.millis(400), INTRO_DURATION = Duration.millis(250);
 	private static final PseudoClass HIGHLIGHT = PseudoClass.getPseudoClass("highlight");
 	private static final String
 			CONTROLS_BUTTON_LABEL_CSS = "controls-button-label",
@@ -18,7 +18,7 @@ public class ControlsButton extends StackPane {
 	private final Transition showTransition = new Transition() {
 		
 		{
-			setCycleDuration(showDuration);
+			setCycleDuration(SHOW_DURATION);
 			setOnFinished(eh -> {
 				getChildren().clear();
 				controlsBox().animateIn();
@@ -33,6 +33,8 @@ public class ControlsButton extends StackPane {
 		}
 		
 	};
+	
+	private final FadeTransition intro;
 	
 	private final Label label;
 	private final ControlsBox controlsBox;
@@ -57,6 +59,12 @@ public class ControlsButton extends StackPane {
 				this.pseudoClassStateChanged(HIGHLIGHT, true);
 		});
 		this.setOnMouseExited(eh -> this.pseudoClassStateChanged(HIGHLIGHT, false));
+		
+		setOpacity(0);
+		intro = new FadeTransition(INTRO_DURATION, this);
+		intro.setFromValue(0);
+		intro.setToValue(1);
+		
 		getChildren().add(label);
 	}
 
@@ -87,6 +95,10 @@ public class ControlsButton extends StackPane {
 	
 	public boolean isExpanded() {
 		return expanded;
+	}
+	
+	public void animateIn() {
+		intro.playFromStart();
 	}
 	
 }
