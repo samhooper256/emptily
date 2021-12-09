@@ -156,7 +156,18 @@ public enum Floor {
 					750, 150, 850, 250, 750, 250)
 			.setGaps(leftGap(100, 1000), rightGap(100, 1000), topGap(100, 1000), bottomGap(100, 1000))
 			.build()
-	))//,
+	)),
+	FOURTH(2, Arrays.asList(
+			RoomLayout.builder("Hard")
+			.setSize(1000, 1000)
+			.addBasicEnemiesCentered(100, 100, 100, 200, 100, 300, 100, 400, 100, 500, 100, 600, 100, 700, 100, 800, 100, 900,
+			900, 100, 900, 200, 900, 300, 900, 400, 900, 500, 900, 600, 900, 700, 900, 800, 900, 900)
+			.addCannonsCentered(400, 400, 400, 600, 600, 400, 600, 600)
+			.addSpikesCentered(25, 25, 975, 25, 25, 975, 975, 975, 300, 25, 700, 25, 300, 975, 700, 975)
+			.setGaps(topGap(100, 1000), bottomGap(100, 1000))
+			.setPlayerSpawn(500, 500)
+			.build()
+	));
 //	TEST(5, Arrays.asList(
 //			RoomLayout.builder()
 //			.setSize(400, 400)
@@ -173,20 +184,9 @@ public enum Floor {
 //			.setPlayerSpawn(200, 400)
 //			.build()
 //	)),
-//	HARD(2, Arrays.asList(
-//			RoomLayout.builder()
-//			.setSize(1000, 1000)
-//			.addBasicEnemiesCentered(100, 100, 100, 200, 100, 300, 100, 400, 100, 500, 100, 600, 100, 700, 100, 800, 100, 900,
-//			900, 100, 900, 200, 900, 300, 900, 400, 900, 500, 900, 600, 900, 700, 900, 800, 900, 900)
-//			.addCannonsCentered(400, 400, 400, 600, 600, 400, 600, 600)
-//			.addSpikesCentered(25, 25, 975, 25, 25, 975, 975, 975, 300, 25, 700, 25, 300, 975, 700, 975)
-//			.setGaps(topGap(100, 1000), bottomGap(100, 1000))
-//			.setPlayerSpawn(500, 500)
-//			.build()
-//	))
-	;
+//	;
 	
-	public static final List<Floor> ORDER = Arrays.asList(Floor.FIRST, Floor.SECOND, Floor.THIRD);
+	public static final List<Floor> ORDER = Arrays.asList(Floor.FIRST, Floor.SECOND, Floor.THIRD, Floor.FOURTH);
 	
 	private static final double INTERIOR_CUT = RoomLayout.BORDER_THICKNESS * 2;
 
